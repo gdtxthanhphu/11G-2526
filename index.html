@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hệ thống Quản lý Lớp học Chuyên sâu v1.7</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        :root { --primary: #0f172a; --accent: #3b82f6; --bg: #f8fafc; }
+        body { font-family: 'Segoe UI', system-ui, sans-serif; background: var(--bg); color: #1e293b; }
+        .sidebar { background: var(--primary); min-height: 100vh; color: #94a3b8; position: sticky; top: 0; z-index: 1000; }
+        .nav-link { color: #94a3b8; padding: 12px; border-radius: 8px; cursor: pointer; transition: 0.2s; margin-bottom: 5px; }
+        .nav-link.active, .nav-link:hover { background: #1e293b; color: white; border-left: 4px solid var(--accent); }
+        .content-section { display: none; padding: 25px; animation: fadeIn 0.3s ease; }
+        .content-section.active { display: block; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        .glass-card { background: white; border-radius: 20px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); padding: 25px; height: 100%; border: none; }
+        .stat-card { background: white; border-radius: 16px; padding: 20px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); display: flex; align-items: center; gap: 15px; border-bottom: 4px solid var(--accent); }
+        
+        /* Profile Card */
+        .profile-card { display: none; margin-top: 20px; border-radius: 20px; overflow: hidden; background: white; box-shadow: 0 10px 30px rgba(0,0,0,0.08); }
+        .profile-header { background: linear-gradient(135deg, #3b82f6, #1d4ed8); color: white; padding: 30px; }
+        .info-item { border-bottom: 1px solid #f1f5f9; padding: 12px 0; }
+        .info-label { font-size: 0.7rem; font-weight: 700; color: #94a3b8; text-transform: uppercase; }
+        .info-value { font-size: 1rem; font-weight: 600; color: #1e293b; }
+    </style>
+</head>
+<body>
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-2 sidebar p-3 d-none d-md-block">
+            <div class="text-white fw-bold mb-4 text-center py-3 border-bottom border-secondary">EDU ANALYTICS</div>
+            <nav class="nav flex-column">
+                <a class="nav-link active" onclick="switchTab('tong-quan', this)"><i class="fas fa-th-large me-2"></i>Tổng quan</a>
+                <a class="nav-link" onclick="switchTab('hoc-sinh', this)"><i class="fas fa-id-card me-2"></i>Hồ sơ cá nhân</a>
+            </nav>
+        </div>
+
+        <div class="col-md-10 p-0">
+            <header class="bg-white p-3 border-bottom shadow-sm sticky-top d-flex justify-content-between align-items-center">
+                <h5 class="fw-bold mb-0 text-primary" id="title-header">Tổng quan lớp học</h5>
+                <div id="loader" class="spinner-border spinner-border-sm text-primary d-none"></div>
+            </header>
+
+            <div id="section-tong-quan" class="content-section active">
+                <div class="row g-3 mb-4 text-center">
+                    <div class="col-md-3"><div class="stat-card"><div><small class="text-muted">Sĩ số</small><div class="fs-4 fw-bold" id="kpi-siso">0</div></div></div></div>
+                    <div class="col-md-3"><div class="stat-card" style="border-color: #22c55e;"><div><small class="text-muted">Điểm tốt</small><div class="fs-4 fw-bold text-success" id="kpi-tot">0</div></div></div></div>
+                    <div class="col-md-3"><div class="stat-card" style="border-color: #f59e0b;"><div><small class="text-muted">Phát biểu</small><div class="fs-4 fw-bold text-warning" id="kpi-phatbieu">0</div></div></div></div>
+                    <div class="col-md-3"><div class="stat-card" style="border-color: #ef4444;"><div><small class="text-muted">Vi phạm</small><div class="fs-4 fw-bold text-danger" id="kpi-vipham">0</div></div></div></div>
+                </div>
+
+                <div class="row g-4 mb-4">
+                    <div class="col-md-6">
+                        <div class="glass-card text-center">
+                            <h6 class="fw-bold mb-4"><i class="fas fa-shield-heart me-2 text-success"></i>Tỷ lệ Hạnh kiểm (Sheet Hạnh kiểm)</h6>
+                            <div style="height: 300px;"><canvas id="conductChart"></canvas></div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="glass-card text-center">
+                            <h6 class="fw-bold mb-4"><i class="fas fa-moon me-2 text-primary"></i>Phân bổ Cung Hoàng Đạo (Sheet Info)</h6>
+                            <div style="height: 300px;"><canvas id="zodiacChart"></canvas></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="glass-card">
+                    <h6 class="fw-bold mb-4"><i class="fas fa-chart-bar me-2"></i>Năng lực 40 Học sinh (Sheet Dashboard)</h6>
+                    <div style="height: 800px; overflow-y: auto;"><div style="height: 1400px;"><canvas id="performanceChart"></canvas></div></div>
+                </div>
+            </div>
+
+            <div id="section-hoc-sinh" class="content-section">
+                <div class="max-width: 900px; margin: auto;">
+                    <div class="glass-card mb-4">
+                        <label class="fw-bold mb-2">Bước 1: Chọn tên học sinh</label>
+                        <select id="student-selector" class="form-select form-select-lg shadow-sm" onchange="displayProfile(this.value)">
+                            <option value="">-- Vui lòng chọn một học sinh --</option>
+                        </select>
+                    </div>
+
+                    <div id="profile-container" class="profile-card">
+                        <div class="profile-header d-flex justify-content-between align-items-center">
+                            <div>
+                                <h2 id="pf-name" class="fw-bold mb-1">---</h2>
+                                <span id="pf-id" class="badge bg-white text-primary">STT: --</span>
+                            </div>
+                            <div class="text-end">
+                                <div id="pf-z-icon" style="font-size: 3rem;">♈</div>
+                                <div id="pf-z-name" class="fw-bold">Bạch Dương</div>
+                            </div>
+                        </div>
+                        <div class="p-4">
+                            <div class="row g-3 mb-4 text-center">
+                                <div class="col-3"><div class="p-3 bg-light rounded-4"><small class="text-muted">ĐIỂM TỐT</small><div id="pf-tot" class="fs-4 fw-bold text-success">0</div></div></div>
+                                <div class="col-3"><div class="p-3 bg-light rounded-4"><small class="text-muted">PHÁT BIỂU</small><div id="pf-pb" class="fs-4 fw-bold text-primary">0</div></div></div>
+                                <div class="col-3"><div class="p-3 bg-light rounded-4"><small class="text-muted">VI PHẠM</small><div id="pf-vp" class="fs-4 fw-bold text-danger">0</div></div></div>
+                                <div class="col-3"><div class="p-3 bg-light rounded-4"><small class="text-muted">HẠNH KIỂM</small><div id="pf-hk" class="fs-5 fw-bold text-dark">---</div></div></div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6 border-end">
+                                    <h6 class="text-primary fw-bold mb-3">Thông tin cá nhân</h6>
+                                    <div class="info-item"><div class="info-label">Ngày sinh / Giới tính</div><div id="pf-birth" class="info-value">---</div></div>
+                                    <div class="info-item"><div class="info-label">Nơi ở</div><div id="pf-addr" class="info-value">---</div></div>
+                                </div>
+                                <div class="col-md-6 ps-md-4">
+                                    <h6 class="text-primary fw-bold mb-3">Gia đình & Liên hệ</h6>
+                                    <div class="info-item"><div class="info-label">Họ tên Cha</div><div id="pf-father" class="info-value">---</div><small id="pf-fphone" class="text-muted"></small></div>
+                                    <div class="info-item"><div class="info-label">Họ tên Mẹ</div><div id="pf-mother" class="info-value">---</div><small id="pf-mphone" class="text-muted"></small></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    const API_URL = 'https://script.google.com/macros/s/AKfycbxBsWF4_wIs3Tf-1rOAeCCkYsmDvvpJEJGwjNNG-BcQoAZPSWDwaPKxqYzNY6tAdat0CA/exec';
+    let rawData = {};
+
+    function getZodiac(dateStr) {
+        if (!dateStr) return {n: "Chưa rõ", i: "❓"};
+        const d = new Date(dateStr);
+        const m = d.getMonth() + 1; const day = d.getDate();
+        if ((m == 3 && day >= 21) || (m == 4 && day <= 19)) return {n: "Bạch Dương", i: "♈"};
+        if ((m == 4 && day >= 20) || (m == 5 && day <= 20)) return {n: "Kim Ngưu", i: "♉"};
+        if ((m == 5 && day >= 21) || (m == 6 && day <= 20)) return {n: "Song Tử", i: "♊"};
+        if ((m == 6 && day >= 21) || (m == 7 && day <= 22)) return {n: "Cự Giải", i: "♋"};
+        if ((m == 7 && day >= 23) || (m == 8 && day <= 22)) return {n: "Sư Tử", i: "♌"};
+        if ((m == 8 && day >= 23) || (m == 9 && day <= 22)) return {n: "Xử Nữ", i: "♍"};
+        if ((m == 9 && day >= 23) || (m == 10 && day <= 22)) return {n: "Thiên Bình", i: "♎"};
+        if ((m == 10 && day >= 23) || (m == 11 && day <= 21)) return {n: "Bọ Cạp", i: "♏"};
+        if ((m == 11 && day >= 22) || (m == 12 && day <= 21)) return {n: "Nhân Mã", i: "♐"};
+        if ((m == 12 && day >= 22) || (m == 1 && day <= 19)) return {n: "Ma Kết", i: "♑"};
+        if ((m == 1 && day >= 20) || (m == 2 && day <= 18)) return {n: "Bảo Bình", i: "♒"};
+        if ((m == 2 && day >= 19) || (m == 3 && day <= 20)) return {n: "Song Ngư", i: "♓"};
+        return {n: "N/A", i: "❓"};
+    }
+
+    function switchTab(id, el) {
+        document.querySelectorAll('.content-section').forEach(s => s.classList.remove('active'));
+        document.getElementById('section-' + id).classList.add('active');
+        document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
+        el.classList.add('active');
+        document.getElementById('title-header').innerText = el.innerText;
+    }
+
+    async function init() {
+        document.getElementById('loader').classList.remove('d-none');
+        try {
+            const res = await fetch(API_URL);
+            rawData = await res.json();
+            
+            // 1. KPIs
+            document.getElementById('kpi-siso').innerText = rawData.info.length;
+            document.getElementById('kpi-tot').innerText = rawData.dash.reduce((s, i) => s + (Number(i['Điểm tốt']) || 0), 0);
+            document.getElementById('kpi-phatbieu').innerText = rawData.dash.reduce((s, i) => s + (Number(i['Phát biểu đúng']) || 0), 0);
+            document.getElementById('kpi-vipham').innerText = rawData.dash.reduce((s, i) => s + (Number(i['Điểm xấu']) || 0), 0);
+
+            // 2. Load Select Option cho Tab Hồ Sơ
+            const selector = document.getElementById('student-selector');
+            rawData.info.forEach(s => {
+                let opt = document.createElement('option');
+                opt.value = s['Họ và tên'];
+                opt.innerText = s['Họ và tên'];
+                selector.appendChild(opt);
+            });
+
+            // 3. Render Dashboard Charts
+            renderCharts();
+        } catch (e) { console.error(e); }
+        finally { document.getElementById('loader').classList.add('d-none'); }
+    }
+
+    function renderCharts() {
+        // Conduct Doughnut
+        const hkCounts = { 'Tốt': 0, 'Khá': 0, 'Đạt': 0, 'Không đạt': 0 };
+        rawData.conduct.forEach(c => { const val = c['Hạnh kiểm']?.trim(); if(hkCounts[val] !== undefined) hkCounts[val]++; });
+        new Chart(document.getElementById('conductChart'), {
+            type: 'doughnut', data: { labels: Object.keys(hkCounts), datasets: [{ data: Object.values(hkCounts), backgroundColor: ['#22c55e','#eab308','#f97316','#ef4444'] }] },
+            options: { cutout: '70%', plugins: { legend: { position: 'bottom' } } }
+        });
+
+        // Zodiac Polar
+        const zCounts = {};
+        rawData.info.forEach(s => { const z = getZodiac(s['Ngày sinh']).n; zCounts[z] = (zCounts[z] || 0) + 1; });
+        new Chart(document.getElementById('zodiacChart'), {
+            type: 'polarArea', data: { labels: Object.keys(zCounts), datasets: [{ data: Object.values(zCounts), backgroundColor: ['#6366f1','#a855f7','#ec4899','#f43f5e','#f97316','#eab308','#22c55e','#06b6d4','#3b82f6','#8b5cf6','#d946ef','#14b8a6'] }] },
+            options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'right', labels: { boxWidth: 10 } } } }
+        });
+
+        // Performance Horizontal Bar
+        const sorted = [...rawData.dash].sort((a,b) => b['Điểm tốt'] - a['Điểm tốt']);
+        new Chart(document.getElementById('performanceChart'), {
+            type: 'bar', data: { labels: sorted.map(d => d['Học sinh']), datasets: [
+                { label: 'Điểm tốt', data: sorted.map(d => d['Điểm tốt']), backgroundColor: '#3b82f6' },
+                { label: 'Phát biểu', data: sorted.map(d => d['Phát biểu đúng']), backgroundColor: '#22c55e' },
+                { label: 'Vi phạm', data: sorted.map(d => d['Điểm xấu']), backgroundColor: '#ef4444' }
+            ]}, options: { indexAxis: 'y', responsive: true, maintainAspectRatio: false }
+        });
+    }
+
+    function displayProfile(name) {
+        if(!name) { document.getElementById('profile-container').style.display = 'none'; return; }
+        const info = rawData.info.find(s => s['Họ và tên'] === name);
+        const dash = rawData.dash.find(d => d['Học sinh'] === name) || {};
+        const conduct = rawData.conduct.find(c => c['Học sinh'] === name) || {};
+        const zodiac = getZodiac(info['Ngày sinh']);
+
+        document.getElementById('profile-container').style.display = 'block';
+        document.getElementById('pf-name').innerText = name;
+        document.getElementById('pf-id').innerText = "STT: " + info['STT'];
+        document.getElementById('pf-z-icon').innerText = zodiac.i;
+        document.getElementById('pf-z-name').innerText = zodiac.n;
+        document.getElementById('pf-tot').innerText = dash['Điểm tốt'] || 0;
+        document.getElementById('pf-pb').innerText = dash['Phát biểu đúng'] || 0;
+        document.getElementById('pf-vp').innerText = dash['Điểm xấu'] || 0;
+        document.getElementById('pf-hk').innerText = conduct['Hạnh kiểm'] || '---';
+        document.getElementById('pf-birth').innerText = info['Ngày sinh'] + " | " + info['Giới tính'];
+        document.getElementById('pf-addr').innerText = info['Nơi ở'] || 'Chưa cập nhật';
+        document.getElementById('pf-father').innerText = info['Họ tên Cha'] || '---';
+        document.getElementById('pf-fphone').innerText = info['Số điện thoại Cha'] || '';
+        document.getElementById('pf-mother').innerText = info['Họ tên Mẹ'] || '---';
+        document.getElementById('pf-mphone').innerText = info['Số điện thoại Mẹ'] || '';
+    }
+
+    window.onload = init;
+</script>
+</body>
+</html>

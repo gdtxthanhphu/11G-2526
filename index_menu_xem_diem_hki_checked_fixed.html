@@ -1,0 +1,2419 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hệ thống Quản lý Lớp học Chuyên sâu v2.0</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        :root { --primary: #0f172a; --accent: #3b82f6; --bg: #f8fafc; }
+        body { font-family: 'Segoe UI', system-ui, sans-serif; background: var(--bg); color: #1e293b; }
+        .sidebar { background: var(--primary); min-height: 100vh; color: #94a3b8; position: sticky; top: 0; z-index: 1000; }
+        .nav-link { color: #94a3b8; padding: 12px; border-radius: 8px; cursor: pointer; transition: 0.2s; margin-bottom: 5px; }
+        .nav-link.active, .nav-link:hover { background: #1e293b; color: white; border-left: 4px solid var(--accent); }
+        .content-section { display: none; padding: 25px; animation: fadeIn 0.3s ease; }
+        .content-section.active { display: block; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+        .glass-card {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+            padding: 25px;
+            height: 100%;
+            border: none;
+        }
+
+        .stat-card {
+            background: white;
+            border-radius: 16px;
+            padding: 20px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            border-bottom: 4px solid var(--accent);
+        }
+
+        .profile-card {
+            display: none;
+            margin-top: 20px;
+            border-radius: 20px;
+            overflow: hidden;
+            background: white;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+        }
+
+        .profile-header {
+            background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+            color: white;
+            padding: 30px;
+        }
+
+        .info-item {
+            border-bottom: 1px solid #f1f5f9;
+            padding: 12px 0;
+        }
+
+        .info-label {
+            font-size: 0.7rem;
+            font-weight: 700;
+            color: #94a3b8;
+            text-transform: uppercase;
+        }
+
+        .info-value {
+            font-size: 1rem;
+            font-weight: 600;
+            color: #1e293b;
+        }
+
+        .rank-item, .student-item, .concern-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 14px;
+            border-radius: 12px;
+            background: white;
+            margin-bottom: 10px;
+            border: 1px solid #eef2f7;
+        }
+
+        .rank-badge {
+            width: 34px;
+            height: 34px;
+            border-radius: 50%;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            color: white;
+            margin-right: 10px;
+        }
+
+        .rank-1 { background: #f59e0b; }
+        .rank-2 { background: #94a3b8; }
+        .rank-3 { background: #b45309; }
+        .rank-other { background: #3b82f6; }
+
+        .score-pill {
+            padding: 6px 12px;
+            border-radius: 999px;
+            font-size: 0.9rem;
+            font-weight: 700;
+        }
+
+        .score-good { background: #dcfce7; color: #166534; }
+        .score-warn { background: #fee2e2; color: #991b1b; }
+
+        .week-select-wrap { max-width: 320px; }
+
+        .empty-note {
+            color: #64748b;
+            font-style: italic;
+            padding: 8px 0;
+        }
+
+        .duty-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 18px;
+        }
+
+        .duty-card {
+            background: linear-gradient(180deg, #ffffff 0%, #f8fbff 100%);
+            border: 1px solid #e2e8f0;
+            border-radius: 20px;
+            padding: 18px;
+            box-shadow: 0 6px 18px rgba(15, 23, 42, 0.05);
+        }
+
+        .duty-card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 14px;
+            padding-bottom: 10px;
+            border-bottom: 1px dashed #dbeafe;
+        }
+
+        .duty-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: #2563eb;
+            color: white;
+            padding: 8px 14px;
+            border-radius: 999px;
+            font-weight: 700;
+            font-size: 0.95rem;
+        }
+
+        .duty-meta {
+            font-size: 0.85rem;
+            color: #64748b;
+            font-weight: 600;
+        }
+
+        .duty-task-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 12px;
+        }
+
+        .duty-task {
+            background: #ffffff;
+            border: 1px solid #e5edf7;
+            border-radius: 16px;
+            padding: 14px;
+            min-height: 96px;
+        }
+
+        .duty-task-label {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.82rem;
+            font-weight: 800;
+            color: #334155;
+            text-transform: uppercase;
+            margin-bottom: 8px;
+        }
+
+        .duty-task-value {
+            font-size: 1rem;
+            font-weight: 700;
+            color: #0f172a;
+            line-height: 1.4;
+        }
+
+        .duty-icon {
+            width: 28px;
+            height: 28px;
+            border-radius: 10px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.9rem;
+        }
+
+        .duty-icon-blue { background: #dbeafe; color: #2563eb; }
+        .duty-icon-green { background: #dcfce7; color: #16a34a; }
+        .duty-icon-amber { background: #fef3c7; color: #d97706; }
+        .duty-icon-pink { background: #fce7f3; color: #db2777; }
+
+
+        .activity-hero {
+            background: linear-gradient(135deg, #0f172a 0%, #1e3a8a 55%, #2563eb 100%);
+            border-radius: 28px;
+            color: white;
+            padding: 28px;
+            box-shadow: 0 18px 40px rgba(37, 99, 235, 0.18);
+        }
+
+        .activity-hero-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(255,255,255,0.12);
+            border: 1px solid rgba(255,255,255,0.18);
+            color: #e0f2fe;
+            padding: 8px 14px;
+            border-radius: 999px;
+            font-size: 0.82rem;
+            font-weight: 700;
+            margin-bottom: 14px;
+        }
+
+        .activity-hero-title {
+            font-size: 1.8rem;
+            font-weight: 800;
+            margin-bottom: 8px;
+        }
+
+        .activity-hero-text {
+            color: rgba(255,255,255,0.84);
+            max-width: 720px;
+            margin-bottom: 0;
+        }
+
+        .activity-week-card {
+            background: rgba(255,255,255,0.1);
+            border: 1px solid rgba(255,255,255,0.18);
+            border-radius: 22px;
+            padding: 18px;
+            backdrop-filter: blur(8px);
+        }
+
+        .activity-week-card label {
+            font-weight: 700;
+            color: rgba(255,255,255,0.92);
+        }
+
+        .activity-week-card .form-select {
+            border-radius: 14px;
+            border: 1px solid rgba(255,255,255,0.18);
+            min-height: 48px;
+            box-shadow: none;
+        }
+
+        .activity-week-focus {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-top: 12px;
+            color: rgba(255,255,255,0.9);
+            font-weight: 600;
+            font-size: 0.94rem;
+        }
+
+        .activity-overview-grid {
+            display: grid;
+            grid-template-columns: repeat(4, minmax(0, 1fr));
+            gap: 14px;
+            margin-top: 24px;
+        }
+
+        .activity-overview-card {
+            background: rgba(255,255,255,0.1);
+            border: 1px solid rgba(255,255,255,0.16);
+            border-radius: 22px;
+            padding: 18px;
+            min-height: 120px;
+        }
+
+        .activity-overview-label {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: rgba(255,255,255,0.82);
+            font-size: 0.84rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+            margin-bottom: 12px;
+        }
+
+        .activity-overview-icon {
+            width: 34px;
+            height: 34px;
+            border-radius: 12px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(255,255,255,0.18);
+            color: white;
+        }
+
+        .activity-overview-value {
+            font-size: 1.85rem;
+            line-height: 1;
+            font-weight: 800;
+            margin-bottom: 6px;
+        }
+
+        .activity-overview-note {
+            color: rgba(255,255,255,0.72);
+            font-size: 0.9rem;
+        }
+
+        .activity-panel {
+            padding: 22px;
+        }
+
+        .activity-panel-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 16px;
+            margin-bottom: 18px;
+        }
+
+        .activity-panel-title {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 1.08rem;
+            font-weight: 800;
+            color: #0f172a;
+            margin-bottom: 4px;
+        }
+
+        .activity-panel-title-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 14px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1rem;
+        }
+
+        .activity-panel-title-icon.warning { background: #fef3c7; color: #b45309; }
+        .activity-panel-title-icon.success { background: #dcfce7; color: #15803d; }
+        .activity-panel-title-icon.danger { background: #fee2e2; color: #b91c1c; }
+        .activity-panel-title-icon.primary { background: #dbeafe; color: #1d4ed8; }
+
+        .activity-panel-subtitle {
+            color: #64748b;
+            font-size: 0.92rem;
+        }
+
+        .activity-panel-tag {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 12px;
+            border-radius: 999px;
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            color: #334155;
+            font-size: 0.82rem;
+            font-weight: 700;
+            white-space: nowrap;
+        }
+
+        .activity-list {
+            display: grid;
+            gap: 12px;
+        }
+
+        .team-ranking-grid {
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        }
+
+        .activity-item {
+            background: linear-gradient(180deg, #ffffff 0%, #f8fbff 100%);
+            border: 1px solid #e5edf7;
+            border-radius: 18px;
+            padding: 14px;
+            transition: transform 0.18s ease, box-shadow 0.18s ease;
+        }
+
+        .activity-item:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 12px 24px rgba(15, 23, 42, 0.08);
+        }
+
+        .activity-item-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 12px;
+            margin-bottom: 8px;
+        }
+
+        .activity-item-left {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            min-width: 0;
+        }
+
+        .activity-item-rank {
+            width: 38px;
+            height: 38px;
+            border-radius: 14px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 800;
+            color: white;
+            flex-shrink: 0;
+            background: #2563eb;
+        }
+
+        .activity-item-rank.rank-1 { background: linear-gradient(135deg, #f59e0b, #f97316); }
+        .activity-item-rank.rank-2 { background: linear-gradient(135deg, #94a3b8, #64748b); }
+        .activity-item-rank.rank-3 { background: linear-gradient(135deg, #b45309, #92400e); }
+
+        .activity-item-name {
+            font-size: 1rem;
+            font-weight: 800;
+            color: #0f172a;
+            line-height: 1.35;
+        }
+
+        .activity-item-desc {
+            color: #64748b;
+            font-size: 0.92rem;
+            margin-top: 2px;
+        }
+
+        .activity-item-metrics {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .activity-item-metrics.tight {
+            gap: 6px;
+        }
+
+        .activity-chip {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            border-radius: 999px;
+            padding: 7px 12px;
+            font-size: 0.84rem;
+            font-weight: 700;
+        }
+
+        .activity-chip.blue { background: #dbeafe; color: #1d4ed8; }
+        .activity-chip.green { background: #dcfce7; color: #166534; }
+        .activity-chip.amber { background: #fef3c7; color: #b45309; }
+        .activity-chip.red { background: #fee2e2; color: #b91c1c; }
+        .activity-chip.slate { background: #e2e8f0; color: #334155; }
+
+        .activity-value-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            border-radius: 999px;
+            padding: 8px 14px;
+            font-size: 0.92rem;
+            font-weight: 800;
+            white-space: nowrap;
+        }
+
+        .activity-value-badge.good { background: #dcfce7; color: #166534; }
+        .activity-value-badge.warn { background: #fee2e2; color: #991b1b; }
+
+        .activity-empty {
+            border: 1px dashed #cbd5e1;
+            border-radius: 18px;
+            padding: 18px;
+            background: #f8fafc;
+            color: #64748b;
+            font-style: italic;
+        }
+
+
+        .score-toolbar {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .score-filter-btn {
+            border: 1px solid #cbd5e1;
+            background: #fff;
+            color: #334155;
+            padding: 8px 14px;
+            border-radius: 999px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .score-filter-btn.active,
+        .score-filter-btn:hover {
+            background: #2563eb;
+            border-color: #2563eb;
+            color: white;
+        }
+
+        .score-hero {
+            background: linear-gradient(135deg, #1d4ed8, #3b82f6);
+            border-radius: 24px;
+            color: white;
+            padding: 24px;
+            margin-bottom: 20px;
+        }
+
+        .score-hero-meta {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px 18px;
+            margin-top: 10px;
+            color: rgba(255,255,255,0.92);
+            font-size: 0.95rem;
+        }
+
+        .score-mini-stat {
+            background: #f8fafc;
+            border-radius: 18px;
+            padding: 18px;
+            height: 100%;
+            border: 1px solid #e2e8f0;
+        }
+
+        .score-mini-label {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: .04em;
+            color: #64748b;
+            font-weight: 700;
+            margin-bottom: 6px;
+        }
+
+        .score-mini-value {
+            font-size: 1.45rem;
+            font-weight: 800;
+            color: #0f172a;
+        }
+
+        .score-pill-soft {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            border-radius: 999px;
+            padding: 8px 14px;
+            font-size: 0.9rem;
+            font-weight: 700;
+        }
+
+        .score-pill-blue { background: #dbeafe; color: #1d4ed8; }
+        .score-pill-green { background: #dcfce7; color: #166534; }
+        .score-pill-amber { background: #fef3c7; color: #b45309; }
+        .score-pill-red { background: #fee2e2; color: #b91c1c; }
+        .score-pill-slate { background: #e2e8f0; color: #334155; }
+
+        .score-subject-table-wrap {
+            background: white;
+            border: 1px solid #e2e8f0;
+            border-radius: 20px;
+            padding: 14px;
+        }
+
+        .score-ranking-table thead th {
+            font-size: 0.82rem;
+            text-transform: uppercase;
+            letter-spacing: .03em;
+            color: #64748b;
+            border-bottom: 1px solid #e2e8f0;
+            white-space: nowrap;
+        }
+
+        .score-ranking-table tbody tr {
+            transition: 0.18s;
+        }
+
+        .score-ranking-table tbody tr:hover {
+            background: #f8fafc;
+        }
+
+        .score-rank-number {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 800;
+            background: #e2e8f0;
+            color: #0f172a;
+        }
+
+        .score-rank-top1 { background: #f59e0b; color: white; }
+        .score-rank-top2 { background: #94a3b8; color: white; }
+        .score-rank-top3 { background: #b45309; color: white; }
+
+        .score-student-empty {
+            min-height: 220px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            color: #64748b;
+            gap: 10px;
+        }
+
+        .score-note-box {
+            background: #fff7ed;
+            border: 1px solid #fed7aa;
+            color: #9a3412;
+            border-radius: 16px;
+            padding: 14px 16px;
+            font-weight: 600;
+        }
+
+        .score-table-actions .btn {
+            border-radius: 999px;
+        }
+
+        .score-highlight-card {
+            border-radius: 18px;
+            background: linear-gradient(180deg, #ffffff 0%, #f8fbff 100%);
+            border: 1px solid #dbeafe;
+            padding: 18px;
+            height: 100%;
+        }
+
+        @media (max-width: 768px) {
+            .score-hero {
+                padding: 18px;
+            }
+        }
+
+
+        @media (max-width: 1200px) {
+            .activity-overview-grid {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+            }
+        }
+
+        @media (max-width: 768px) {
+            .duty-task-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .activity-hero {
+                padding: 20px;
+                border-radius: 24px;
+            }
+
+            .activity-hero-title {
+                font-size: 1.45rem;
+            }
+
+            .activity-overview-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .activity-item-top {
+                flex-direction: column;
+            }
+
+            .activity-panel-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .activity-value-badge {
+                width: fit-content;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-2 sidebar p-3 d-none d-md-block">
+            <div class="text-white fw-bold mb-4 text-center py-3 border-bottom border-secondary">EDU ANALYTICS</div>
+            <nav class="nav flex-column">
+                <a class="nav-link active" onclick="chuyentab('tong-quan', this)">
+                    <i class="fas fa-th-large me-2"></i>Tổng quan
+                </a>
+                <a class="nav-link" onclick="chuyentab('hoc-sinh', this)">
+                    <i class="fas fa-id-card me-2"></i>Hồ sơ cá nhân
+                </a>
+
+                <a class="nav-link" onclick="chuyentab('xem-diem', this)">
+                    <i class="fas fa-graduation-cap me-2"></i>Xem điểm HKI
+                </a>
+                <a class="nav-link" onclick="chuyentab('hoat-dong', this)">
+                    <i class="fas fa-bolt me-2"></i>Hoạt động
+                </a>
+            </nav>
+        </div>
+
+        <div class="col-md-10 p-0">
+            <header class="bg-white p-3 border-bottom shadow-sm sticky-top d-flex justify-content-between align-items-center">
+                <h5 class="fw-bold mb-0 text-primary" id="title-header">Tổng quan lớp học</h5>
+                <div id="loader" class="spinner-border spinner-border-sm text-primary d-none"></div>
+            </header>
+
+            <div id="section-tong-quan" class="content-section active">
+                <div class="row g-3 mb-4 text-center">
+                    <div class="col-md-3">
+                        <div class="stat-card">
+                            <div>
+                                <small class="text-muted">Sĩ số</small>
+                                <div class="fs-4 fw-bold" id="kpi-siso">0</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="stat-card" style="border-color: #22c55e;">
+                            <div>
+                                <small class="text-muted">Điểm tốt</small>
+                                <div class="fs-4 fw-bold text-success" id="kpi-tot">0</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="stat-card" style="border-color: #f59e0b;">
+                            <div>
+                                <small class="text-muted">Phát biểu</small>
+                                <div class="fs-4 fw-bold text-warning" id="kpi-phatbieu">0</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="stat-card" style="border-color: #ef4444;">
+                            <div>
+                                <small class="text-muted">Vi phạm</small>
+                                <div class="fs-4 fw-bold text-danger" id="kpi-vipham">0</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row g-4 mb-4">
+                    <div class="col-md-6">
+                        <div class="glass-card text-center">
+                            <h6 class="fw-bold mb-4">
+                                <i class="fas fa-shield-heart me-2 text-success"></i>Tỷ lệ Hạnh kiểm
+                            </h6>
+                            <div style="height: 300px;"><canvas id="conductChart"></canvas></div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="glass-card text-center">
+                            <h6 class="fw-bold mb-4">
+                                <i class="fas fa-moon me-2 text-primary"></i>Phân bổ Cung Hoàng Đạo
+                            </h6>
+                            <div style="height: 300px;"><canvas id="zodiacChart"></canvas></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="glass-card">
+                    <h6 class="fw-bold mb-4">
+                        <i class="fas fa-chart-bar me-2"></i>Năng lực học sinh
+                    </h6>
+                    <div style="height: 800px; overflow-y: auto;">
+                        <div style="height: 1400px;">
+                            <canvas id="performanceChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="section-xem-diem" class="content-section">
+                <div id="score-source-alert" class="alert alert-info mb-4">Tab này đang đọc dữ liệu trực tiếp từ API Apps Script qua cùng <strong>apiurl</strong> với các sheet khác, sử dụng key <strong>tongKetHocKyI</strong> của sheet <strong>TongKetHocKyI</strong>.</div>
+                <div class="row g-3 mb-4 text-center">
+                    <div class="col-md-3">
+                        <div class="stat-card">
+                            <div>
+                                <small class="text-muted">Sĩ số HKI</small>
+                                <div class="fs-4 fw-bold" id="score-kpi-siso">0</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="stat-card" style="border-color: #2563eb;">
+                            <div>
+                                <small class="text-muted">Điểm TB lớp</small>
+                                <div class="fs-4 fw-bold text-primary" id="score-kpi-avg">0.00</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="stat-card" style="border-color: #22c55e;">
+                            <div>
+                                <small class="text-muted">Học tập Tốt</small>
+                                <div class="fs-4 fw-bold text-success" id="score-kpi-tot">0</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="stat-card" style="border-color: #f97316;">
+                            <div>
+                                <small class="text-muted">Tổng buổi nghỉ</small>
+                                <div class="fs-4 fw-bold" style="color:#ea580c" id="score-kpi-nghi">0</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row g-4 mb-4">
+                    <div class="col-lg-4">
+                        <div class="glass-card h-100">
+                            <label class="fw-bold mb-2">Chọn học sinh</label>
+                            <select id="score-student-selector" class="form-select form-select-lg shadow-sm" onchange="xemdiemhocsinh(this.value)">
+                                <option value="">-- Chọn học sinh để xem điểm --</option>
+                            </select>
+
+                            <div class="mt-3">
+                                <label class="fw-bold mb-2">Tìm nhanh trong bảng xếp hạng</label>
+                                <input id="score-search-input" type="text" class="form-control" placeholder="Nhập tên học sinh..." oninput="locbangdiem(this.value)">
+                            </div>
+
+                            <div class="mt-3">
+                                <label class="fw-bold mb-2">Lọc theo kết quả học tập</label>
+                                <div class="score-toolbar" id="score-filter-toolbar">
+                                    <button class="score-filter-btn active" type="button" onclick="locxeploai('Tất cả', this)">Tất cả</button>
+                                    <button class="score-filter-btn" type="button" onclick="locxeploai('Tốt', this)">Tốt</button>
+                                    <button class="score-filter-btn" type="button" onclick="locxeploai('Khá', this)">Khá</button>
+                                    <button class="score-filter-btn" type="button" onclick="locxeploai('Đạt', this)">Đạt</button>
+                                </div>
+                            </div>
+
+                            <div class="mt-4">
+                                <h6 class="fw-bold mb-3">
+                                    <i class="fas fa-chart-pie me-2 text-primary"></i>Phân loại kết quả học tập
+                                </h6>
+                                <div style="height: 280px;">
+                                    <canvas id="scoreDistributionChart"></canvas>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-lg-8">
+                        <div class="glass-card h-100">
+                            <div id="score-student-empty" class="score-student-empty">
+                                <div style="font-size: 2.5rem; color:#93c5fd;">
+                                    <i class="fas fa-user-graduate"></i>
+                                </div>
+                                <div class="fw-bold">Chưa chọn học sinh</div>
+                                <div class="text-center">Hãy chọn một học sinh để xem đầy đủ điểm các môn, xếp loại học tập, rèn luyện và số buổi nghỉ trong HKI.</div>
+                            </div>
+
+                            <div id="score-student-detail" style="display:none;">
+                                <div class="score-hero">
+                                    <div class="d-flex flex-wrap justify-content-between align-items-start gap-3">
+                                        <div>
+                                            <h3 id="score-detail-name" class="fw-bold mb-1">---</h3>
+                                            <div class="score-hero-meta">
+                                                <span id="score-detail-meta-id">Mã HS: ---</span>
+                                                <span id="score-detail-meta-stt">STT: ---</span>
+                                                <span id="score-detail-meta-birth">Ngày sinh: ---</span>
+                                            </div>
+                                        </div>
+                                        <div class="text-end">
+                                            <div class="score-pill-soft score-pill-blue mb-2" id="score-detail-hocluc">Học tập: ---</div>
+                                            <div class="score-pill-soft score-pill-slate" id="score-detail-renluyen">Rèn luyện: ---</div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="row g-3 mb-4">
+                                    <div class="col-md-3">
+                                        <div class="score-mini-stat">
+                                            <div class="score-mini-label">Điểm TB 7 môn</div>
+                                            <div class="score-mini-value" id="score-detail-avg">0.00</div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <div class="score-mini-stat">
+                                            <div class="score-mini-label">HĐTN&HN</div>
+                                            <div class="score-mini-value" id="score-detail-hdtn">---</div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <div class="score-mini-stat">
+                                            <div class="score-mini-label">Nghỉ có phép</div>
+                                            <div class="score-mini-value" id="score-detail-nghip">0</div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <div class="score-mini-stat">
+                                            <div class="score-mini-label">Tổng buổi nghỉ</div>
+                                            <div class="score-mini-value" id="score-detail-nghitong">0</div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="row g-4">
+                                    <div class="col-lg-6">
+                                        <div class="score-subject-table-wrap">
+                                            <h6 class="fw-bold mb-3">
+                                                <i class="fas fa-table-list me-2 text-primary"></i>Bảng điểm chi tiết
+                                            </h6>
+                                            <div class="table-responsive">
+                                                <table class="table align-middle mb-0">
+                                                    <thead>
+                                                        <tr>
+                                                            <th>Môn</th>
+                                                            <th class="text-center">Điểm</th>
+                                                            <th class="text-center">TB lớp</th>
+                                                            <th class="text-center">Đánh giá</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody id="score-detail-subject-body"></tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-lg-6">
+                                        <div class="score-highlight-card">
+                                            <h6 class="fw-bold mb-3">
+                                                <i class="fas fa-chart-radar me-2 text-success"></i>So sánh với trung bình lớp
+                                            </h6>
+                                            <div style="height: 320px;">
+                                                <canvas id="studentScoreChart"></canvas>
+                                            </div>
+                                        </div>
+
+                                        <div id="score-detail-note" class="score-note-box mt-3 d-none"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="glass-card">
+                    <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-3">
+                        <div>
+                            <h6 class="fw-bold mb-1">
+                                <i class="fas fa-ranking-star me-2 text-warning"></i>Bảng xếp hạng điểm trung bình HKI
+                            </h6>
+                            <div class="text-muted">Xếp theo điểm trung bình 7 môn trong sheet TongKetHocKyI</div>
+                        </div>
+                        <div class="text-muted small" id="score-table-count">0 học sinh</div>
+                    </div>
+
+                    <div class="table-responsive">
+                        <table class="table score-ranking-table align-middle">
+                            <thead>
+                                <tr>
+                                    <th>Hạng</th>
+                                    <th>Học sinh</th>
+                                    <th class="text-center">Điểm TB</th>
+                                    <th class="text-center">Học tập</th>
+                                    <th class="text-center">Rèn luyện</th>
+                                    <th class="text-center">Nghỉ</th>
+                                    <th class="text-center">Xem</th>
+                                </tr>
+                            </thead>
+                            <tbody id="score-ranking-body"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+
+            <div id="section-hoc-sinh" class="content-section">
+                <div style="max-width: 900px; margin: auto;">
+                    <div class="glass-card mb-4">
+                        <label class="fw-bold mb-2">Bước 1: Chọn tên học sinh</label>
+                        <select id="student-selector" class="form-select form-select-lg shadow-sm" onchange="hienthihoso(this.value)">
+                            <option value="">-- Vui lòng chọn một học sinh --</option>
+                        </select>
+                    </div>
+
+                    <div id="profile-container" class="profile-card">
+                        <div class="profile-header d-flex justify-content-between align-items-center">
+                            <div>
+                                <h2 id="pf-name" class="fw-bold mb-1">---</h2>
+                                <span id="pf-id" class="badge bg-white text-primary">STT: --</span>
+                            </div>
+                            <div class="text-end">
+                                <div id="pf-z-icon" style="font-size: 3rem;">♈</div>
+                                <div id="pf-z-name" class="fw-bold">Bạch Dương</div>
+                            </div>
+                        </div>
+
+                        <div class="p-4">
+                            <div class="row g-3 mb-4 text-center">
+                                <div class="col-3">
+                                    <div class="p-3 bg-light rounded-4">
+                                        <small class="text-muted">ĐIỂM TỐT</small>
+                                        <div id="pf-tot" class="fs-4 fw-bold text-success">0</div>
+                                    </div>
+                                </div>
+                                <div class="col-3">
+                                    <div class="p-3 bg-light rounded-4">
+                                        <small class="text-muted">PHÁT BIỂU</small>
+                                        <div id="pf-pb" class="fs-4 fw-bold text-primary">0</div>
+                                    </div>
+                                </div>
+                                <div class="col-3">
+                                    <div class="p-3 bg-light rounded-4">
+                                        <small class="text-muted">VI PHẠM</small>
+                                        <div id="pf-vp" class="fs-4 fw-bold text-danger">0</div>
+                                    </div>
+                                </div>
+                                <div class="col-3">
+                                    <div class="p-3 bg-light rounded-4">
+                                        <small class="text-muted">HẠNH KIỂM</small>
+                                        <div id="pf-hk" class="fs-5 fw-bold text-dark">---</div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-md-6 border-end">
+                                    <h6 class="text-primary fw-bold mb-3">Thông tin cá nhân</h6>
+                                    <div class="info-item">
+                                        <div class="info-label">Ngày sinh / Giới tính</div>
+                                        <div id="pf-birth" class="info-value">---</div>
+                                    </div>
+                                    <div class="info-item">
+                                        <div class="info-label">Tuổi</div>
+                                        <div id="pf-age" class="info-value">---</div>
+                                    </div>
+                                    <div class="info-item">
+                                        <div class="info-label">Nơi ở</div>
+                                        <div id="pf-addr" class="info-value">---</div>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-6 ps-md-4">
+                                    <h6 class="text-primary fw-bold mb-3">Gia đình & Liên hệ</h6>
+                                    <div class="info-item">
+                                        <div class="info-label">Số điện thoại học sinh</div>
+                                        <div id="pf-phone" class="info-value">---</div>
+                                    </div>
+                                    <div class="info-item">
+                                        <div class="info-label">Họ tên Cha</div>
+                                        <div id="pf-father" class="info-value">---</div>
+                                        <small id="pf-fphone" class="text-muted"></small>
+                                    </div>
+                                    <div class="info-item">
+                                        <div class="info-label">Họ tên Mẹ</div>
+                                        <div id="pf-mother" class="info-value">---</div>
+                                        <small id="pf-mphone" class="text-muted"></small>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="section-hoat-dong" class="content-section">
+                <div class="activity-hero mb-4">
+                    <div class="row g-4 align-items-center">
+                        <div class="col-lg-8">
+                            <div class="activity-hero-badge">
+                                <i class="fas fa-bolt"></i>
+                                Theo dõi hoạt động theo tuần
+                            </div>
+                            <div class="activity-hero-title">Bảng điều hành hoạt động lớp học</div>
+                            <p class="activity-hero-text">
+                                Theo dõi nhanh tình hình thi đua, học sinh nổi bật, học sinh cần quan tâm và lịch trực nhật
+                                theo từng tuần từ Dashboard_Top_Tuan và các sheet hoạt động liên quan.
+                            </p>
+                        </div>
+
+                        <div class="col-lg-4">
+                            <div class="activity-week-card">
+                                <label class="mb-2">Chọn tuần theo dõi</label>
+                                <select id="week-selector" class="form-select" onchange="renderhoatdong(this.value)">
+                                    <option value="">-- Chọn tuần --</option>
+                                </select>
+                                <div class="activity-week-focus">
+                                    <i class="fas fa-calendar-week"></i>
+                                    <span id="activity-week-label">Chưa chọn tuần</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="activity-overview-grid">
+                        <div class="activity-overview-card">
+                            <div class="activity-overview-label">
+                                <span class="activity-overview-icon"><i class="fas fa-people-group"></i></span>
+                                Tổ tham gia
+                            </div>
+                            <div class="activity-overview-value" id="activity-stat-teams">0</div>
+                            <div class="activity-overview-note">Số tổ có dữ liệu thi đua trong tuần</div>
+                        </div>
+
+                        <div class="activity-overview-card">
+                            <div class="activity-overview-label">
+                                <span class="activity-overview-icon"><i class="fas fa-star"></i></span>
+                                Học sinh nổi bật
+                            </div>
+                            <div class="activity-overview-value" id="activity-stat-top">0</div>
+                            <div class="activity-overview-note">Số học sinh được ghi nhận nổi bật</div>
+                        </div>
+
+                        <div class="activity-overview-card">
+                            <div class="activity-overview-label">
+                                <span class="activity-overview-icon"><i class="fas fa-triangle-exclamation"></i></span>
+                                Cần quan tâm
+                            </div>
+                            <div class="activity-overview-value" id="activity-stat-concern">0</div>
+                            <div class="activity-overview-note">Số học sinh cần theo dõi thêm</div>
+                        </div>
+
+                        <div class="activity-overview-card">
+                            <div class="activity-overview-label">
+                                <span class="activity-overview-icon"><i class="fas fa-broom"></i></span>
+                                Ca trực nhật
+                            </div>
+                            <div class="activity-overview-value" id="activity-stat-duty">0</div>
+                            <div class="activity-overview-note">Tổng số buổi trực nhật trong tuần</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row g-4 mb-4 align-items-stretch">
+                    <div class="col-xl-7">
+                        <div class="glass-card activity-panel">
+                            <div class="activity-panel-header">
+                                <div>
+                                    <div class="activity-panel-title">
+                                        <span class="activity-panel-title-icon warning"><i class="fas fa-ranking-star"></i></span>
+                                        Bảng xếp hạng tổ
+                                    </div>
+                                    <div class="activity-panel-subtitle">Tổng hợp điểm thi đua theo tổ từ dữ liệu Dashboard_Tuan.</div>
+                                </div>
+                                <div class="activity-panel-tag">
+                                    <i class="fas fa-chart-line"></i>
+                                    So sánh theo tổng điểm
+                                </div>
+                            </div>
+                            <div id="team-ranking-list" class="activity-list team-ranking-grid"></div>
+                        </div>
+                    </div>
+
+                    <div class="col-xl-5">
+                        <div class="glass-card activity-panel">
+                            <div class="activity-panel-header">
+                                <div>
+                                    <div class="activity-panel-title">
+                                        <span class="activity-panel-title-icon success"><i class="fas fa-star"></i></span>
+                                        Học sinh nổi bật
+                                    </div>
+                                    <div class="activity-panel-subtitle">Lấy trực tiếp từ Dashboard_Top_Tuan theo tuần đang chọn.</div>
+                                </div>
+                                <div class="activity-panel-tag">
+                                    <i class="fas fa-award"></i>
+                                    Thành tích tích cực
+                                </div>
+                            </div>
+                            <div id="top-students-list" class="activity-list"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row g-4 align-items-stretch">
+                    <div class="col-xl-5">
+                        <div class="glass-card activity-panel">
+                            <div class="activity-panel-header">
+                                <div>
+                                    <div class="activity-panel-title">
+                                        <span class="activity-panel-title-icon danger"><i class="fas fa-triangle-exclamation"></i></span>
+                                        Học sinh cần quan tâm
+                                    </div>
+                                    <div class="activity-panel-subtitle">Theo dõi các trường hợp cần chú ý thêm trong tuần.</div>
+                                </div>
+                                <div class="activity-panel-tag">
+                                    <i class="fas fa-eye"></i>
+                                    Ưu tiên hỗ trợ sớm
+                                </div>
+                            </div>
+                            <div id="concern-students-list" class="activity-list"></div>
+                        </div>
+                    </div>
+
+                    <div class="col-xl-7">
+                        <div class="glass-card activity-panel">
+                            <div class="activity-panel-header">
+                                <div>
+                                    <div class="activity-panel-title">
+                                        <span class="activity-panel-title-icon primary"><i class="fas fa-broom"></i></span>
+                                        Lịch trực nhật tuần
+                                    </div>
+                                    <div class="activity-panel-subtitle">Phân công trực nhật theo từng buổi để lớp vận hành gọn gàng.</div>
+                                </div>
+                                <div class="activity-panel-tag">
+                                    <i class="fas fa-list-check"></i>
+                                    Phân công theo buổi
+                                </div>
+                            </div>
+                            <div id="duty-list"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    const apiurl = 'https://script.google.com/macros/s/AKfycbzOMYHl-8f1svXCxI_jgiHKCjMy6ku9OCAr6A57daVmWwmbga1UrJ7_04sCv2bh6zaUhQ/exec';
+
+    const dulieu = {
+        info: [],
+        dash: [],
+        conduct: [],
+        dashTuan: [],
+        dashTopTuan: [],
+        duty: [],
+        tongKetHocKyI: []
+    };
+
+    const bochon = {
+        tuan: '',
+        hocsinh: ''
+    };
+
+    function chuanhoa(text) {
+        return (text || '').toString().trim();
+    }
+
+    function sonumber(value) {
+        const so = Number(value);
+        return Number.isFinite(so) ? so : 0;
+    }
+
+    function dinhdangtenTo(value) {
+        const raw = chuanhoa(value);
+        if (!raw) return 'Chưa rõ';
+        return khoachuan(raw).startsWith('to') ? raw : `Tổ ${raw}`;
+    }
+
+    function laycung(ngaysinh) {
+        if (!ngaysinh) return { ten: 'Chưa rõ', icon: '❓' };
+        const d = new Date(ngaysinh);
+        if (isNaN(d.getTime())) return { ten: 'Chưa rõ', icon: '❓' };
+
+        const m = d.getMonth() + 1;
+        const day = d.getDate();
+
+        if ((m === 3 && day >= 21) || (m === 4 && day <= 19)) return { ten: 'Bạch Dương', icon: '♈' };
+        if ((m === 4 && day >= 20) || (m === 5 && day <= 20)) return { ten: 'Kim Ngưu', icon: '♉' };
+        if ((m === 5 && day >= 21) || (m === 6 && day <= 20)) return { ten: 'Song Tử', icon: '♊' };
+        if ((m === 6 && day >= 21) || (m === 7 && day <= 22)) return { ten: 'Cự Giải', icon: '♋' };
+        if ((m === 7 && day >= 23) || (m === 8 && day <= 22)) return { ten: 'Sư Tử', icon: '♌' };
+        if ((m === 8 && day >= 23) || (m === 9 && day <= 22)) return { ten: 'Xử Nữ', icon: '♍' };
+        if ((m === 9 && day >= 23) || (m === 10 && day <= 22)) return { ten: 'Thiên Bình', icon: '♎' };
+        if ((m === 10 && day >= 23) || (m === 11 && day <= 21)) return { ten: 'Bọ Cạp', icon: '♏' };
+        if ((m === 11 && day >= 22) || (m === 12 && day <= 21)) return { ten: 'Nhân Mã', icon: '♐' };
+        if ((m === 12 && day >= 22) || (m === 1 && day <= 19)) return { ten: 'Ma Kết', icon: '♑' };
+        if ((m === 1 && day >= 20) || (m === 2 && day <= 18)) return { ten: 'Bảo Bình', icon: '♒' };
+        if ((m === 2 && day >= 19) || (m === 3 && day <= 20)) return { ten: 'Song Ngư', icon: '♓' };
+
+        return { ten: 'N/A', icon: '❓' };
+    }
+
+    function laytuoi(ngaysinh) {
+        if (!ngaysinh) return '---';
+
+        const sinh = new Date(ngaysinh);
+        if (isNaN(sinh.getTime())) return '---';
+
+        const today = new Date();
+        let tuoi = today.getFullYear() - sinh.getFullYear();
+        const lechthang = today.getMonth() - sinh.getMonth();
+
+        if (lechthang < 0 || (lechthang === 0 && today.getDate() < sinh.getDate())) {
+            tuoi--;
+        }
+
+        return tuoi >= 0 ? tuoi : '---';
+    }
+
+    function laysdthocsinh(thongtin) {
+        if (!thongtin) return '---';
+
+        return thongtin['Số điện thoại']
+            || thongtin['SĐT']
+            || thongtin['Số điện thoại HS']
+            || thongtin['SĐT HS']
+            || thongtin['Điện thoại']
+            || thongtin['Điện thoại học sinh']
+            || '---';
+    }
+
+    function capnhatdulieu(raw = {}) {
+        dulieu.info = Array.isArray(raw.info) ? raw.info : [];
+        dulieu.dash = Array.isArray(raw.dash) ? raw.dash : [];
+        dulieu.conduct = Array.isArray(raw.conduct) ? raw.conduct : [];
+        dulieu.dashTuan = Array.isArray(raw.dashTuan) ? raw.dashTuan : [];
+        dulieu.dashTopTuan = Array.isArray(raw.dashTopTuan) ? raw.dashTopTuan : [];
+        dulieu.duty = Array.isArray(raw.duty) ? raw.duty : [];
+        dulieu.tongKetHocKyI = Array.isArray(raw.tongKetHocKyI)
+            ? raw.tongKetHocKyI
+            : (Array.isArray(raw.data) ? raw.data : []);
+    }
+
+    function chuyentab(id, el) {
+        document.querySelectorAll('.content-section').forEach(section => {
+            section.classList.remove('active');
+        });
+
+        const vung = document.getElementById('section-' + id);
+        if (vung) vung.classList.add('active');
+
+        document.querySelectorAll('.nav-link').forEach(link => {
+            link.classList.remove('active');
+        });
+
+        if (el) el.classList.add('active');
+        document.getElementById('title-header').innerText = el ? el.innerText : '';
+    }
+
+    async function khoitao() {
+        document.getElementById('loader').classList.remove('d-none');
+
+        try {
+            const res = await fetch(apiurl);
+            const raw = await res.json();
+            capnhatdulieu(raw);
+
+            renderkpi();
+            renderdanhsachhocsinh();
+            renderdanhsachtuan();
+            renderbieudo();
+        } catch (error) {
+            console.error('Lỗi tải dữ liệu:', error);
+        }
+
+        await khoitaoxemdiem();
+        document.getElementById('loader').classList.add('d-none');
+    }
+
+
+    function renderkpi() {
+        document.getElementById('kpi-siso').innerText = dulieu.info.length;
+        document.getElementById('kpi-tot').innerText = dulieu.dash.reduce((tong, item) => tong + sonumber(item['Điểm tốt']), 0);
+        document.getElementById('kpi-phatbieu').innerText = dulieu.dash.reduce((tong, item) => tong + sonumber(item['Phát biểu đúng']), 0);
+        document.getElementById('kpi-vipham').innerText = dulieu.dash.reduce((tong, item) => tong + sonumber(item['Điểm xấu']), 0);
+    }
+
+    function renderdanhsachhocsinh() {
+        const select = document.getElementById('student-selector');
+        if (!select) return;
+
+        select.innerHTML = '<option value="">-- Vui lòng chọn một học sinh --</option>';
+
+        dulieu.info.forEach(item => {
+            const ten = chuanhoa(item['Họ và tên']);
+            if (!ten) return;
+
+            const opt = document.createElement('option');
+            opt.value = ten;
+            opt.innerText = ten;
+            select.appendChild(opt);
+        });
+    }
+
+    function sapxeptuan(a, b) {
+        const soA = Number(a);
+        const soB = Number(b);
+
+        if (Number.isFinite(soA) && Number.isFinite(soB)) {
+            return soA - soB;
+        }
+
+        return String(a).localeCompare(String(b), 'vi', { numeric: true, sensitivity: 'base' });
+    }
+
+    function laydanhsachtuan() {
+        return [...new Set([
+            ...dulieu.dashTuan.map(item => chuanhoa(item['Tuần'])),
+            ...dulieu.dashTopTuan.map(item => chuanhoa(item['Tuần'])),
+            ...dulieu.duty.map(item => chuanhoa(item['Tuần']))
+        ].filter(Boolean))].sort(sapxeptuan);
+    }
+
+    function renderdanhsachtuan() {
+        const select = document.getElementById('week-selector');
+        if (!select) return;
+
+        const dstuan = laydanhsachtuan();
+        select.innerHTML = '<option value="">-- Chọn tuần --</option>';
+
+        dstuan.forEach(tuan => {
+            const opt = document.createElement('option');
+            opt.value = tuan;
+            opt.textContent = tuan;
+            select.appendChild(opt);
+        });
+
+        if (dstuan.length > 0) {
+            const tuanMacDinh = dstuan[dstuan.length - 1];
+            bochon.tuan = tuanMacDinh;
+            select.value = tuanMacDinh;
+            renderhoatdong(tuanMacDinh);
+        } else {
+            renderhoatdong('');
+        }
+    }
+
+    function renderbieudo() {
+        const bieudohanhkiem = document.getElementById('conductChart');
+        const bieudocunghoangdao = document.getElementById('zodiacChart');
+        const bieudonangluc = document.getElementById('performanceChart');
+
+        if (bieudohanhkiem) {
+            const dem = { 'Tốt': 0, 'Khá': 0, 'Đạt': 0, 'Không đạt': 0 };
+
+            dulieu.conduct.forEach(item => {
+                const hk = chuanhoa(item['Hạnh kiểm']);
+                if (dem[hk] !== undefined) dem[hk]++;
+            });
+
+            new Chart(bieudohanhkiem, {
+                type: 'doughnut',
+                data: {
+                    labels: Object.keys(dem),
+                    datasets: [{
+                        data: Object.values(dem),
+                        backgroundColor: ['#22c55e', '#eab308', '#f97316', '#ef4444']
+                    }]
+                },
+                options: {
+                    cutout: '70%',
+                    plugins: {
+                        legend: { position: 'bottom' }
+                    }
+                }
+            });
+        }
+
+        if (bieudocunghoangdao) {
+            const dem = {};
+
+            dulieu.info.forEach(item => {
+                const cung = laycung(item['Ngày sinh']).ten;
+                dem[cung] = (dem[cung] || 0) + 1;
+            });
+
+            new Chart(bieudocunghoangdao, {
+                type: 'polarArea',
+                data: {
+                    labels: Object.keys(dem),
+                    datasets: [{
+                        data: Object.values(dem),
+                        backgroundColor: ['#6366f1','#a855f7','#ec4899','#f43f5e','#f97316','#eab308','#22c55e','#06b6d4','#3b82f6','#8b5cf6','#d946ef','#14b8a6']
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'right',
+                            labels: { boxWidth: 10 }
+                        }
+                    }
+                }
+            });
+        }
+
+        if (bieudonangluc) {
+            const sapxep = [...dulieu.dash].sort((a, b) => sonumber(b['Điểm tốt']) - sonumber(a['Điểm tốt']));
+
+            new Chart(bieudonangluc, {
+                type: 'bar',
+                data: {
+                    labels: sapxep.map(item => item['Học sinh']),
+                    datasets: [
+                        {
+                            label: 'Điểm tốt',
+                            data: sapxep.map(item => sonumber(item['Điểm tốt'])),
+                            backgroundColor: '#3b82f6'
+                        },
+                        {
+                            label: 'Phát biểu',
+                            data: sapxep.map(item => sonumber(item['Phát biểu đúng'])),
+                            backgroundColor: '#22c55e'
+                        },
+                        {
+                            label: 'Vi phạm',
+                            data: sapxep.map(item => sonumber(item['Điểm xấu'])),
+                            backgroundColor: '#ef4444'
+                        }
+                    ]
+                },
+                options: {
+                    indexAxis: 'y',
+                    responsive: true,
+                    maintainAspectRatio: false
+                }
+            });
+        }
+    }
+
+    function timinfohocsinh(ten) {
+        return dulieu.info.find(item => chuanhoa(item['Họ và tên']) === chuanhoa(ten));
+    }
+
+    function timdashhocsinh(ten) {
+        return dulieu.dash.find(item => chuanhoa(item['Học sinh']) === chuanhoa(ten)) || {};
+    }
+
+    function timhanhkiemhocsinh(ten) {
+        return dulieu.conduct.find(item => chuanhoa(item['Học sinh']) === chuanhoa(ten)) || {};
+    }
+
+    function hienthihoso(ten) {
+        const khung = document.getElementById('profile-container');
+        bochon.hocsinh = chuanhoa(ten);
+
+        if (!ten) {
+            if (khung) khung.style.display = 'none';
+            return;
+        }
+
+        const info = timinfohocsinh(ten);
+        if (!info) {
+            if (khung) khung.style.display = 'none';
+            return;
+        }
+
+        const dash = timdashhocsinh(ten);
+        const hanhkiem = timhanhkiemhocsinh(ten);
+        const cung = laycung(info['Ngày sinh']);
+        const tuoi = laytuoi(info['Ngày sinh']);
+        const sdt = laysdthocsinh(info);
+
+        khung.style.display = 'block';
+
+        document.getElementById('pf-name').innerText = ten;
+        document.getElementById('pf-id').innerText = 'STT: ' + (info['STT'] || '--');
+        document.getElementById('pf-z-icon').innerText = cung.icon;
+        document.getElementById('pf-z-name').innerText = cung.ten;
+        document.getElementById('pf-tot').innerText = sonumber(dash['Điểm tốt']);
+        document.getElementById('pf-pb').innerText = sonumber(dash['Phát biểu đúng']);
+        document.getElementById('pf-vp').innerText = sonumber(dash['Điểm xấu']);
+        document.getElementById('pf-hk').innerText = hanhkiem['Hạnh kiểm'] || '---';
+        document.getElementById('pf-birth').innerText = (info['Ngày sinh'] || '---') + ' | ' + (info['Giới tính'] || '---');
+        document.getElementById('pf-age').innerText = tuoi;
+        document.getElementById('pf-addr').innerText = info['Nơi ở'] || 'Chưa cập nhật';
+        document.getElementById('pf-phone').innerText = sdt;
+        document.getElementById('pf-father').innerText = info['Họ tên Cha'] || '---';
+        document.getElementById('pf-fphone').innerText = info['Số điện thoại Cha'] || '';
+        document.getElementById('pf-mother').innerText = info['Họ tên Mẹ'] || '---';
+        document.getElementById('pf-mphone').innerText = info['Số điện thoại Mẹ'] || '';
+    }
+
+    function laydulieutuan(tuan) {
+        const tuanchon = chuanhoa(tuan);
+        if (!tuanchon) return [];
+        return dulieu.dashTuan.filter(item => chuanhoa(item['Tuần']) === tuanchon);
+    }
+
+    function laydulieutoptuan(tuan) {
+        const tuanchon = chuanhoa(tuan);
+        if (!tuanchon) return [];
+
+        return dulieu.dashTopTuan.filter(item => chuanhoa(item['Tuần']) === tuanchon);
+    }
+
+    function laydulieutrucnhat(tuan) {
+        const tuanchon = chuanhoa(tuan);
+        if (!tuanchon) return [];
+        return dulieu.duty.filter(item => chuanhoa(item['Tuần']) === tuanchon);
+    }
+
+    function laydanhsachnoibat(tuan) {
+        const bando = new Map();
+
+        laydulieutoptuan(tuan).forEach(item => {
+            const ten = chuanhoa(item['Học sinh tốt nhất (đạt tiêu chí)']);
+            if (!ten || ten === '---') return;
+
+            const key = khoachuan(ten);
+            const hienTai = bando.get(key);
+            const banGhi = {
+                ten,
+                nam: chuanhoa(item['Năm']) || '---',
+                tot: sonumber(item['Điểm tốt']),
+                phatBieu: sonumber(item['Phát biểu đúng'])
+            };
+
+            if (!hienTai || banGhi.tot > hienTai.tot || (banGhi.tot === hienTai.tot && banGhi.phatBieu > hienTai.phatBieu)) {
+                bando.set(key, banGhi);
+            }
+        });
+
+        return [...bando.values()]
+            .sort((a, b) => b.tot - a.tot || b.phatBieu - a.phatBieu || a.ten.localeCompare(b.ten, 'vi'));
+    }
+
+    function laydanhsachcanquantam(tuan) {
+        const bando = new Map();
+
+        laydulieutoptuan(tuan).forEach(item => {
+            const ten = chuanhoa(item['Học sinh cần chú ý']);
+            if (!ten || ten === '---') return;
+
+            const key = khoachuan(ten);
+            const hienTai = bando.get(key);
+            const banGhi = {
+                ten,
+                nam: chuanhoa(item['Năm']) || '---',
+                tongViPham: sonumber(item['Tổng vi phạm'])
+            };
+
+            if (!hienTai || banGhi.tongViPham > hienTai.tongViPham) {
+                bando.set(key, banGhi);
+            }
+        });
+
+        return [...bando.values()]
+            .sort((a, b) => b.tongViPham - a.tongViPham || a.ten.localeCompare(b.ten, 'vi'));
+    }
+
+    function capnhattongquanhoatdong(tuan) {
+        const weekLabel = document.getElementById('activity-week-label');
+        const teamEl = document.getElementById('activity-stat-teams');
+        const topEl = document.getElementById('activity-stat-top');
+        const concernEl = document.getElementById('activity-stat-concern');
+        const dutyEl = document.getElementById('activity-stat-duty');
+
+        const dslop = laydulieutuan(tuan);
+        const dsduty = laydulieutrucnhat(tuan);
+        const dsNoiBat = laydanhsachnoibat(tuan);
+        const dsCanQuanTam = laydanhsachcanquantam(tuan);
+
+        const soto = new Set(
+            dslop
+                .map(item => khoachuan(item['Tổ']))
+                .filter(Boolean)
+        ).size;
+
+        if (weekLabel) weekLabel.innerText = tuan ? `Tuần đang xem: ${tuan}` : 'Chưa chọn tuần';
+        if (teamEl) teamEl.innerText = soto;
+        if (topEl) topEl.innerText = dsNoiBat.length;
+        if (concernEl) concernEl.innerText = dsCanQuanTam.length;
+        if (dutyEl) dutyEl.innerText = dsduty.length;
+    }
+
+
+    function renderhoatdong(tuan) {
+        bochon.tuan = chuanhoa(tuan);
+        capnhattongquanhoatdong(bochon.tuan);
+        renderxephangto(bochon.tuan);
+        renderhocsinhnoibat(bochon.tuan);
+        renderhocsinhcanquantam(bochon.tuan);
+        rendertructuan(bochon.tuan);
+    }
+
+    function renderxephangto(tuan) {
+        const khung = document.getElementById('team-ranking-list');
+        if (!khung) return;
+
+        if (!tuan) {
+            khung.innerHTML = '<div class="activity-empty">Chưa có dữ liệu tuần để xếp hạng tổ.</div>';
+            return;
+        }
+
+        const dong = laydulieutuan(tuan);
+        if (!dong.length) {
+            khung.innerHTML = '<div class="activity-empty">Không có dữ liệu xếp hạng tổ cho tuần này.</div>';
+            return;
+        }
+
+        const bando = {};
+
+        dong.forEach(item => {
+            const to = chuanhoa(item['Tổ']) || 'Chưa rõ';
+            const tong = sonumber(item['Tổng điểm']);
+            const tot = sonumber(item['Điểm tốt']);
+            const xau = sonumber(item['Điểm xấu']);
+
+            if (!bando[to]) {
+                bando[to] = { to, tong: 0, tot: 0, xau: 0 };
+            }
+
+            bando[to].tong += tong;
+            bando[to].tot += tot;
+            bando[to].xau += xau;
+        });
+
+        const sapxep = Object.values(bando).sort((a, b) => b.tong - a.tong);
+
+        khung.innerHTML = sapxep.map((item, index) => {
+            const rankClass = index === 0 ? 'rank-1' : index === 1 ? 'rank-2' : index === 2 ? 'rank-3' : '';
+            return `
+                <div class="activity-item">
+                    <div class="activity-item-top">
+                        <div class="activity-item-left">
+                            <div class="activity-item-rank ${rankClass}">${index + 1}</div>
+                            <div>
+                                <div class="activity-item-name">${dinhdangtenTo(item.to)}</div>
+                                <div class="activity-item-desc">Tổng hợp thành tích thi đua trong tuần ${tuan}.</div>
+                            </div>
+                        </div>
+                        <div class="activity-value-badge ${item.tong >= 0 ? 'good' : 'warn'}">
+                            <i class="fas fa-signal"></i>
+                            ${item.tong} điểm
+                        </div>
+                    </div>
+                    <div class="activity-item-metrics tight">
+                        <span class="activity-chip blue"><i class="fas fa-plus"></i> Điểm tốt: ${item.tot}</span>
+                        <span class="activity-chip red"><i class="fas fa-minus"></i> Điểm xấu: ${item.xau}</span>
+                    </div>
+                </div>
+            `;
+        }).join('');
+    }
+
+
+    function renderhocsinhnoibat(tuan) {
+        const khung = document.getElementById('top-students-list');
+        if (!khung) return;
+
+        if (!tuan) {
+            khung.innerHTML = '<div class="activity-empty">Chưa có dữ liệu tuần để hiển thị học sinh nổi bật.</div>';
+            return;
+        }
+
+        const danhsach = laydanhsachnoibat(tuan).slice(0, 5);
+
+        if (!danhsach.length) {
+            khung.innerHTML = '<div class="activity-empty">Không có dữ liệu học sinh nổi bật hợp lệ trong Dashboard_Top_Tuan cho tuần này.</div>';
+            return;
+        }
+
+        khung.innerHTML = danhsach.map((item, index) => `
+            <div class="activity-item">
+                <div class="activity-item-top">
+                    <div class="activity-item-left">
+                        <div class="activity-item-rank ${index === 0 ? 'rank-1' : index === 1 ? 'rank-2' : index === 2 ? 'rank-3' : ''}">
+                            <i class="fas fa-star"></i>
+                        </div>
+                        <div>
+                            <div class="activity-item-name">${item.ten}</div>
+                            <div class="activity-item-desc">Ghi nhận nổi bật trong tuần ${tuan}${item.nam !== '---' ? ` • Năm ${item.nam}` : ''}.</div>
+                        </div>
+                    </div>
+                    <div class="activity-value-badge good">
+                        <i class="fas fa-award"></i>
+                        Tốt ${item.tot}
+                    </div>
+                </div>
+                <div class="activity-item-metrics tight">
+                    <span class="activity-chip green"><i class="fas fa-thumbs-up"></i> Điểm tốt: ${item.tot}</span>
+                    <span class="activity-chip blue"><i class="fas fa-comment-dots"></i> Phát biểu đúng: ${item.phatBieu}</span>
+                </div>
+            </div>
+        `).join('');
+    }
+
+
+    function renderhocsinhcanquantam(tuan) {
+        const khung = document.getElementById('concern-students-list');
+        if (!khung) return;
+
+        if (!tuan) {
+            khung.innerHTML = '<div class="activity-empty">Chưa có dữ liệu tuần để hiển thị học sinh cần quan tâm.</div>';
+            return;
+        }
+
+        const danhsach = laydanhsachcanquantam(tuan).slice(0, 5);
+
+        if (!danhsach.length) {
+            khung.innerHTML = '<div class="activity-empty">Không có dữ liệu học sinh cần quan tâm hợp lệ trong Dashboard_Top_Tuan cho tuần này.</div>';
+            return;
+        }
+
+        khung.innerHTML = danhsach.map((item, index) => `
+            <div class="activity-item">
+                <div class="activity-item-top">
+                    <div class="activity-item-left">
+                        <div class="activity-item-rank ${index === 0 ? 'rank-1' : index === 1 ? 'rank-2' : index === 2 ? 'rank-3' : ''}">
+                            <i class="fas fa-eye"></i>
+                        </div>
+                        <div>
+                            <div class="activity-item-name">${item.ten}</div>
+                            <div class="activity-item-desc">Cần được theo dõi và hỗ trợ thêm trong tuần ${tuan}${item.nam !== '---' ? ` • Năm ${item.nam}` : ''}.</div>
+                        </div>
+                    </div>
+                    <div class="activity-value-badge ${item.tongViPham > 0 ? 'warn' : 'good'}">
+                        <i class="fas fa-shield-exclamation"></i>
+                        VP ${item.tongViPham}
+                    </div>
+                </div>
+                <div class="activity-item-metrics tight">
+                    <span class="activity-chip red"><i class="fas fa-triangle-exclamation"></i> Tổng vi phạm: ${item.tongViPham}</span>
+                </div>
+            </div>
+        `).join('');
+    }
+
+
+    function rendertructuan(tuan) {
+        const khung = document.getElementById('duty-list');
+        if (!khung) return;
+
+        if (!tuan) {
+            khung.innerHTML = '<div class="activity-empty">Chưa có dữ liệu tuần.</div>';
+            return;
+        }
+
+        const dong = laydulieutrucnhat(tuan);
+        if (!dong.length) {
+            khung.innerHTML = '<div class="activity-empty">Không có dữ liệu trực nhật cho tuần này.</div>';
+            return;
+        }
+
+        khung.innerHTML = `
+            <div class="duty-grid">
+                ${dong.map(item => `
+                    <div class="duty-card">
+                        <div class="duty-card-header">
+                            <div class="duty-badge">
+                                <i class="fas fa-calendar-check"></i>
+                                ${item['Buổi'] || '---'}
+                            </div>
+                            <div class="duty-meta">Phân công trực nhật</div>
+                        </div>
+
+                        <div class="duty-task-grid">
+                            <div class="duty-task">
+                                <div class="duty-task-label">
+                                    <span class="duty-icon duty-icon-blue"><i class="fas fa-broom"></i></span>
+                                    Quét tổ 1,2
+                                </div>
+                                <div class="duty-task-value">${item['Quét tổ 1,2'] || '---'}</div>
+                            </div>
+
+                            <div class="duty-task">
+                                <div class="duty-task-label">
+                                    <span class="duty-icon duty-icon-green"><i class="fas fa-broom-ball"></i></span>
+                                    Quét tổ 3,4
+                                </div>
+                                <div class="duty-task-value">${item['Quét tổ 3,4'] || '---'}</div>
+                            </div>
+
+                            <div class="duty-task">
+                                <div class="duty-task-label">
+                                    <span class="duty-icon duty-icon-amber"><i class="fas fa-trash"></i></span>
+                                    Đổ rác + hành lang
+                                </div>
+                                <div class="duty-task-value">${item['Đổ rác + hành lang'] || '---'}</div>
+                            </div>
+
+                            <div class="duty-task">
+                                <div class="duty-task-label">
+                                    <span class="duty-icon duty-icon-pink"><i class="fas fa-seedling"></i></span>
+                                    Bảng + Tưới cây
+                                </div>
+                                <div class="duty-task-value">${item['Bảng + Tưới cây'] || '---'}</div>
+                            </div>
+                        </div>
+                    </div>
+                `).join('')}
+            </div>
+        `;
+    }
+
+    let dulieuDiemHKI = [];
+    const monHocHKI = ['Toán', 'Hóa', 'Sinh', 'Tin', 'Văn', 'Sử', 'Địa'];
+
+    const scoreHeaderAliases = {
+        stt: ['STT'],
+        ma_hoc_sinh: ['Mã học sinh', 'Ma hoc sinh', 'Mã HS', 'Ma HS'],
+        so_dinh_danh: ['Số định danh', 'So dinh danh', 'Số ĐD', 'So DD', 'CCCD'],
+        ho_ten: ['Họ và tên', 'Họ tên', 'Ho va ten', 'Tên học sinh', 'Ten hoc sinh', 'Học sinh', 'Hoc sinh'],
+        ngay_sinh: ['Ngày sinh', 'Ngay sinh'],
+        hdtn_hn: ['HĐTN&HN', 'HDTN&HN', 'HĐTN HN', 'HDTN HN'],
+        ket_qua_hoc_tap: ['Kết quả học tập', 'Ket qua hoc tap', 'Học tập', 'Hoc tap'],
+        ket_qua_ren_luyen: ['Kết quả rèn luyện', 'Ket qua ren luyen', 'Rèn luyện', 'Ren luyen'],
+        nghi_p: ['Nghỉ P', 'Nghi P', 'Nghỉ phép', 'Nghi phep'],
+        nghi_k: ['Nghỉ K', 'Nghi K', 'Nghỉ không phép', 'Nghi khong phep'],
+        tong_nghi: ['Tổng nghỉ', 'Tong nghi', 'Tổng buổi nghỉ', 'Tong buoi nghi'],
+        ghi_chu: ['Ghi chú', 'Ghi chu', 'Nhận xét', 'Nhan xet'],
+        diem_tb_7_mon: ['Điểm TB 7 môn', 'Diem TB 7 mon', 'Điểm trung bình 7 môn', 'Diem trung binh 7 mon', 'ĐTB 7 môn', 'DTB 7 mon']
+    };
+
+    const scoreSubjectAliases = {
+        'Toán': ['Toán', 'Toan'],
+        'Hóa': ['Hóa', 'Hoa'],
+        'Sinh': ['Sinh'],
+        'Tin': ['Tin'],
+        'Văn': ['Văn', 'Van', 'Ngữ văn', 'Ngu van'],
+        'Sử': ['Sử', 'Su', 'Lịch sử', 'Lich su'],
+        'Địa': ['Địa', 'Dia', 'Địa lí', 'Dia li', 'Địa lý', 'Dia ly']
+    };
+
+    function khoachuan(text) {
+        return chuanhoa(text)
+            .normalize('NFD')
+            .replace(/[\u0300-\u036f]/g, '')
+            .replace(/đ/g, 'd')
+            .replace(/Đ/g, 'D')
+            .toLowerCase()
+            .replace(/[^a-z0-9]+/g, '');
+    }
+
+    function phantichso(value) {
+        if (typeof value === 'number') return value;
+        const raw = chuanhoa(value);
+        if (!raw) return NaN;
+        const normalized = raw.replace(/\s+/g, '').replace(',', '.');
+        const so = Number(normalized);
+        return Number.isFinite(so) ? so : NaN;
+    }
+
+    function phantichNgayGoogleSheet(value) {
+        if (!value) return '';
+        if (Object.prototype.toString.call(value) === '[object Date]' && !isNaN(value.getTime())) {
+            const y = value.getFullYear();
+            const m = String(value.getMonth() + 1).padStart(2, '0');
+            const d = String(value.getDate()).padStart(2, '0');
+            return `${y}-${m}-${d}`;
+        }
+        if (typeof value === 'string') {
+            const text = chuanhoa(value);
+            if (!text) return '';
+            if (/^\d{4}-\d{2}-\d{2}$/.test(text)) return text;
+            const parts = text.split(/[\/\-]/);
+            if (parts.length === 3) {
+                if (parts[0].length === 4) {
+                    return `${parts[0]}-${parts[1].padStart(2, '0')}-${parts[2].padStart(2, '0')}`;
+                }
+                return `${parts[2]}-${parts[1].padStart(2, '0')}-${parts[0].padStart(2, '0')}`;
+            }
+            return text;
+        }
+        return value;
+    }
+
+    function timTheoAlias(row, aliases) {
+        if (!row || !aliases) return '';
+        const map = {};
+        Object.keys(row).forEach((key) => {
+            map[khoachuan(key)] = row[key];
+        });
+
+        for (const alias of aliases) {
+            const value = map[khoachuan(alias)];
+            if (value !== undefined && value !== null && chuanhoa(value) !== '') {
+                return value;
+            }
+        }
+
+        return '';
+    }
+
+    function chuanHoaDongDiem(row) {
+        const mon_hoc = {};
+        monHocHKI.forEach((mon) => {
+            const rawValue = timTheoAlias(row, scoreSubjectAliases[mon] || [mon]);
+            const so = phantichso(rawValue);
+            mon_hoc[mon] = Number.isFinite(so) ? so : null;
+        });
+
+        const diemHopLe = Object.values(mon_hoc).filter((so) => Number.isFinite(so));
+        const diemTbRaw = phantichso(timTheoAlias(row, scoreHeaderAliases.diem_tb_7_mon));
+        const tongNghiRaw = phantichso(timTheoAlias(row, scoreHeaderAliases.tong_nghi));
+        const nghiPRaw = phantichso(timTheoAlias(row, scoreHeaderAliases.nghi_p));
+        const nghiKRaw = phantichso(timTheoAlias(row, scoreHeaderAliases.nghi_k));
+        const diemTb = Number.isFinite(diemTbRaw)
+            ? diemTbRaw
+            : (diemHopLe.length ? (diemHopLe.reduce((tong, so) => tong + so, 0) / diemHopLe.length) : 0);
+        const tongNghi = Number.isFinite(tongNghiRaw)
+            ? tongNghiRaw
+            : ((Number.isFinite(nghiPRaw) ? nghiPRaw : 0) + (Number.isFinite(nghiKRaw) ? nghiKRaw : 0));
+
+        return {
+            stt: (() => {
+                const value = phantichso(timTheoAlias(row, scoreHeaderAliases.stt));
+                return Number.isFinite(value) ? value : '';
+            })(),
+            ma_hoc_sinh: chuanhoa(timTheoAlias(row, scoreHeaderAliases.ma_hoc_sinh)),
+            so_dinh_danh: chuanhoa(timTheoAlias(row, scoreHeaderAliases.so_dinh_danh)),
+            ho_ten: chuanhoa(timTheoAlias(row, scoreHeaderAliases.ho_ten)),
+            ngay_sinh: phantichNgayGoogleSheet(timTheoAlias(row, scoreHeaderAliases.ngay_sinh)),
+            mon_hoc,
+            hdtn_hn: chuanhoa(timTheoAlias(row, scoreHeaderAliases.hdtn_hn)),
+            ket_qua_hoc_tap: chuanhoa(timTheoAlias(row, scoreHeaderAliases.ket_qua_hoc_tap)),
+            ket_qua_ren_luyen: chuanhoa(timTheoAlias(row, scoreHeaderAliases.ket_qua_ren_luyen)),
+            nghi_p: Number.isFinite(nghiPRaw) ? nghiPRaw : 0,
+            nghi_k: Number.isFinite(nghiKRaw) ? nghiKRaw : 0,
+            tong_nghi: Number.isFinite(tongNghi) ? tongNghi : 0,
+            ghi_chu: chuanhoa(timTheoAlias(row, scoreHeaderAliases.ghi_chu)),
+            diem_tb_7_mon: Number.isFinite(diemTb) ? Number(diemTb.toFixed(2)) : 0
+        };
+    }
+
+    function capnhatTrangThaiDiem(message, level = 'info') {
+        const box = document.getElementById('score-source-alert');
+        if (!box) return;
+        box.className = `alert alert-${level} mb-4`;
+        box.innerHTML = message;
+    }
+
+    function lamMoiGiaoDienDiemRong() {
+        if (scoreDistributionChart) {
+            scoreDistributionChart.destroy();
+            scoreDistributionChart = null;
+        }
+        if (studentScoreChart) {
+            studentScoreChart.destroy();
+            studentScoreChart = null;
+        }
+        document.getElementById('score-kpi-siso').innerText = 0;
+        document.getElementById('score-kpi-avg').innerText = '0.00';
+        document.getElementById('score-kpi-tot').innerText = 0;
+        document.getElementById('score-kpi-nghi').innerText = 0;
+        document.getElementById('score-table-count').innerText = '0 học sinh';
+        const select = document.getElementById('score-student-selector');
+        if (select) {
+            select.innerHTML = '<option value="">-- Chọn học sinh để xem điểm --</option>';
+            select.value = '';
+        }
+        const body = document.getElementById('score-ranking-body');
+        if (body) {
+            body.innerHTML = '<tr><td colspan="7" class="text-center text-muted py-4">Chưa có dữ liệu điểm HKI để hiển thị.</td></tr>';
+        }
+        const emptyBox = document.getElementById('score-student-empty');
+        const detailBox = document.getElementById('score-student-detail');
+        if (emptyBox) emptyBox.style.display = 'flex';
+        if (detailBox) detailBox.style.display = 'none';
+    }
+
+    async function taidulieudiemhki() {
+        const rows = Array.isArray(dulieu.tongKetHocKyI) ? dulieu.tongKetHocKyI : [];
+        const data = rows
+            .map(chuanHoaDongDiem)
+            .filter((item) => item.ho_ten && khoachuan(item.ho_ten) !== 'tongcong');
+
+        if (!data.length) {
+            throw new Error('API đã phản hồi nhưng chưa có dữ liệu hợp lệ trong key tongKetHocKyI.');
+        }
+
+        dulieuDiemHKI = data;
+        return data;
+    }
+
+    const boLocDiem = {
+        tuKhoa: '',
+        xepLoai: 'Tất cả',
+        hocSinh: ''
+    };
+
+    let scoreDistributionChart = null;
+    let studentScoreChart = null;
+
+    function dinhdangngayiso(value) {
+        if (!value) return '---';
+        const d = new Date(value);
+        if (isNaN(d.getTime())) return value;
+        const ngay = String(d.getDate()).padStart(2, '0');
+        const thang = String(d.getMonth() + 1).padStart(2, '0');
+        return `${ngay}/${thang}/${d.getFullYear()}`;
+    }
+
+    function dinhdangso(value, digits = 2) {
+        const so = Number(value);
+        return Number.isFinite(so) ? so.toFixed(digits) : '---';
+    }
+
+    function chuanhoaxeploai(value) {
+        return khoachuan(value);
+    }
+
+    function laydiemmon(item, mon) {
+        const so = item?.mon_hoc?.[mon];
+        return Number.isFinite(so) ? so : null;
+    }
+
+    function tinhtrungbinhloptheomon() {
+        const ketqua = {};
+        monHocHKI.forEach(mon => {
+            const ds = dulieuDiemHKI
+                .map(item => laydiemmon(item, mon))
+                .filter(so => Number.isFinite(so));
+            ketqua[mon] = ds.length ? (ds.reduce((tong, so) => tong + so, 0) / ds.length) : 0;
+        });
+        return ketqua;
+    }
+
+
+    function layhosotheoten(ten) {
+        return dulieuDiemHKI.find(item => chuanhoa(item.ho_ten) === chuanhoa(ten));
+    }
+
+    function sapxephocsinhtheodiem(ds = []) {
+        return [...ds].sort((a, b) => (b.diem_tb_7_mon || 0) - (a.diem_tb_7_mon || 0));
+    }
+
+    async function khoitaoxemdiem() {
+        lamMoiGiaoDienDiemRong();
+
+        capnhatTrangThaiDiem(
+            'Đang tải dữ liệu điểm HKI từ API Apps Script, key <strong>tongKetHocKyI</strong>...',
+            'info'
+        );
+
+        try {
+            await taidulieudiemhki();
+            renderthongkediem();
+            renderdanhsachxemdiem();
+            renderbieudophanloaidiem();
+            renderbangxephangdiem();
+
+            if (dulieuDiemHKI.length > 0) {
+                const hsDauTien = sapxephocsinhtheodiem(dulieuDiemHKI)[0];
+                if (hsDauTien) {
+                    document.getElementById('score-student-selector').value = hsDauTien.ho_ten;
+                    xemdiemhocsinh(hsDauTien.ho_ten);
+                }
+            }
+
+            capnhatTrangThaiDiem(
+                `Đã tải thành công <strong>${dulieuDiemHKI.length}</strong> học sinh từ API Apps Script (<code>tongKetHocKyI</code>).`,
+                'success'
+            );
+        } catch (error) {
+            console.error('Lỗi tải dữ liệu HKI từ API Apps Script:', error);
+            lamMoiGiaoDienDiemRong();
+            capnhatTrangThaiDiem(
+                `Không đọc được dữ liệu điểm HKI từ API Apps Script. ${error?.message ? `<br><small>${error.message}</small>` : ''}<br><small>Hãy kiểm tra xem Apps Script đã trả về key <code>tongKetHocKyI</code> hay chưa.</small>`,
+                'danger'
+            );
+        }
+    }
+
+    function renderthongkediem() {
+        const tonghs = dulieuDiemHKI.length;
+        const tongtb = dulieuDiemHKI.reduce((tong, item) => tong + (Number(item.diem_tb_7_mon) || 0), 0);
+        const tongnghi = dulieuDiemHKI.reduce((tong, item) => tong + (Number(item.tong_nghi) || 0), 0);
+        const sotot = dulieuDiemHKI.filter(item => chuanhoaxeploai(item.ket_qua_hoc_tap) === 'tot').length;
+
+        document.getElementById('score-kpi-siso').innerText = tonghs;
+        document.getElementById('score-kpi-avg').innerText = tonghs ? (tongtb / tonghs).toFixed(2) : '0.00';
+        document.getElementById('score-kpi-tot').innerText = sotot;
+        document.getElementById('score-kpi-nghi').innerText = tongnghi;
+    }
+
+
+    function renderdanhsachxemdiem() {
+        const select = document.getElementById('score-student-selector');
+        if (!select) return;
+
+        const sapxep = sapxephocsinhtheodiem(dulieuDiemHKI);
+        select.innerHTML = '<option value="">-- Chọn học sinh để xem điểm --</option>';
+
+        sapxep.forEach(item => {
+            const opt = document.createElement('option');
+            opt.value = item.ho_ten;
+            opt.textContent = `${item.ho_ten} • TB ${dinhdangso(item.diem_tb_7_mon)}`;
+            select.appendChild(opt);
+        });
+    }
+
+    function renderbieudophanloaidiem() {
+        const canvas = document.getElementById('scoreDistributionChart');
+        if (!canvas) return;
+
+        const dem = { 'Tốt': 0, 'Khá': 0, 'Đạt': 0, 'Khác': 0 };
+        dulieuDiemHKI.forEach(item => {
+            const key = chuanhoaxeploai(item.ket_qua_hoc_tap);
+            if (key === 'tot') dem['Tốt']++;
+            else if (key === 'kha') dem['Khá']++;
+            else if (key === 'dat') dem['Đạt']++;
+            else dem['Khác']++;
+        });
+
+        const labels = Object.keys(dem).filter(label => dem[label] > 0 || label !== 'Khác');
+        const values = labels.map(label => dem[label]);
+        const colors = labels.map(label => {
+            if (label === 'Tốt') return '#22c55e';
+            if (label === 'Khá') return '#f59e0b';
+            if (label === 'Đạt') return '#ef4444';
+            return '#94a3b8';
+        });
+
+        if (scoreDistributionChart) scoreDistributionChart.destroy();
+
+        scoreDistributionChart = new Chart(canvas, {
+            type: 'doughnut',
+            data: {
+                labels,
+                datasets: [{
+                    data: values,
+                    backgroundColor: colors
+                }]
+            },
+            options: {
+                maintainAspectRatio: false,
+                cutout: '68%',
+                plugins: {
+                    legend: { position: 'bottom' }
+                }
+            }
+        });
+    }
+
+
+    function locxeploai(xeploai, el) {
+        boLocDiem.xepLoai = xeploai;
+        document.querySelectorAll('#score-filter-toolbar .score-filter-btn').forEach(btn => btn.classList.remove('active'));
+        if (el) el.classList.add('active');
+        renderbangxephangdiem();
+    }
+
+    function locbangdiem(value) {
+        boLocDiem.tuKhoa = chuanhoa(value).toLowerCase();
+        renderbangxephangdiem();
+    }
+
+    function laysoclassxeploai(xeploai) {
+        switch (chuanhoaxeploai(xeploai)) {
+            case 'tot':
+                return 'score-pill-green';
+            case 'kha':
+                return 'score-pill-amber';
+            case 'dat':
+                return 'score-pill-red';
+            default:
+                return 'score-pill-slate';
+        }
+    }
+
+
+    function laydanhgiamon(score, avg) {
+        if (!Number.isFinite(score)) return { text: 'Chưa có', cls: 'score-pill-slate' };
+        if (score >= avg + 0.5) return { text: 'Nổi bật', cls: 'score-pill-green' };
+        if (score >= avg - 0.4) return { text: 'Ổn định', cls: 'score-pill-blue' };
+        return { text: 'Cần cố gắng', cls: 'score-pill-red' };
+    }
+
+    function renderbangxephangdiem() {
+        const body = document.getElementById('score-ranking-body');
+        if (!body) return;
+
+        const ds = sapxephocsinhtheodiem(
+            dulieuDiemHKI.filter(item => {
+                const hopTuKhoa = !boLocDiem.tuKhoa || chuanhoa(item.ho_ten).toLowerCase().includes(boLocDiem.tuKhoa);
+                const hopXepLoai = boLocDiem.xepLoai === 'Tất cả' || chuanhoaxeploai(item.ket_qua_hoc_tap) === chuanhoaxeploai(boLocDiem.xepLoai);
+                return hopTuKhoa && hopXepLoai;
+            })
+        );
+
+        document.getElementById('score-table-count').innerText = `${ds.length} học sinh`;
+
+        if (!ds.length) {
+            body.innerHTML = `<tr><td colspan="7" class="text-center text-muted py-4">Không tìm thấy học sinh phù hợp bộ lọc hiện tại.</td></tr>`;
+            return;
+        }
+
+        body.innerHTML = ds.map((item, index) => {
+            const hangClass = index === 0 ? 'score-rank-top1' : index === 1 ? 'score-rank-top2' : index === 2 ? 'score-rank-top3' : '';
+            return `
+                <tr>
+                    <td><span class="score-rank-number ${hangClass}">${index + 1}</span></td>
+                    <td>
+                        <div class="fw-bold">${item.ho_ten}</div>
+                        <small class="text-muted">Mã HS: ${item.ma_hoc_sinh || '---'}</small>
+                    </td>
+                    <td class="text-center fw-bold text-primary">${dinhdangso(item.diem_tb_7_mon)}</td>
+                    <td class="text-center"><span class="score-pill-soft ${laysoclassxeploai(item.ket_qua_hoc_tap)}">${item.ket_qua_hoc_tap || '---'}</span></td>
+                    <td class="text-center"><span class="score-pill-soft ${laysoclassxeploai(item.ket_qua_ren_luyen)}">${item.ket_qua_ren_luyen || '---'}</span></td>
+                    <td class="text-center">${item.tong_nghi || 0}</td>
+                    <td class="text-center score-table-actions">
+                        <button class="btn btn-sm btn-outline-primary" onclick='chonhocsinhtubang(${JSON.stringify(item.ho_ten)})'>Xem</button>
+                    </td>
+                </tr>
+            `;
+        }).join('');
+    }
+
+    function chonhocsinhtubang(ten) {
+        const select = document.getElementById('score-student-selector');
+        if (select) select.value = ten;
+        xemdiemhocsinh(ten);
+        const target = document.getElementById('score-student-detail');
+        if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+
+    function xemdiemhocsinh(ten) {
+        const hs = layhosotheoten(ten);
+        const emptyBox = document.getElementById('score-student-empty');
+        const detailBox = document.getElementById('score-student-detail');
+
+        if (!hs) {
+            if (emptyBox) emptyBox.style.display = 'flex';
+            if (detailBox) detailBox.style.display = 'none';
+            return;
+        }
+
+        if (emptyBox) emptyBox.style.display = 'none';
+        if (detailBox) detailBox.style.display = 'block';
+
+        document.getElementById('score-detail-name').innerText = hs.ho_ten || '---';
+        document.getElementById('score-detail-meta-id').innerText = 'Mã HS: ' + (hs.ma_hoc_sinh || '---');
+        document.getElementById('score-detail-meta-stt').innerText = 'STT: ' + (hs.stt || '--');
+        document.getElementById('score-detail-meta-birth').innerText = 'Ngày sinh: ' + dinhdangngayiso(hs.ngay_sinh);
+        document.getElementById('score-detail-hocluc').innerText = 'Học tập: ' + (hs.ket_qua_hoc_tap || '---');
+        document.getElementById('score-detail-hocluc').className = 'score-pill-soft ' + laysoclassxeploai(hs.ket_qua_hoc_tap);
+        document.getElementById('score-detail-renluyen').innerText = 'Rèn luyện: ' + (hs.ket_qua_ren_luyen || '---');
+        document.getElementById('score-detail-renluyen').className = 'score-pill-soft ' + laysoclassxeploai(hs.ket_qua_ren_luyen);
+        document.getElementById('score-detail-avg').innerText = dinhdangso(hs.diem_tb_7_mon);
+        document.getElementById('score-detail-hdtn').innerText = hs.hdtn_hn || '---';
+        document.getElementById('score-detail-nghip').innerText = hs.nghi_p || 0;
+        document.getElementById('score-detail-nghitong').innerText = hs.tong_nghi || 0;
+
+        const tbLopTheoMon = tinhtrungbinhloptheomon();
+        const tbody = document.getElementById('score-detail-subject-body');
+        tbody.innerHTML = monHocHKI.map(mon => {
+            const diem = laydiemmon(hs, mon);
+            const tbMon = Number(tbLopTheoMon[mon]);
+            const danhgia = laydanhgiamon(diem, tbMon);
+            return `
+                <tr>
+                    <td class="fw-semibold">${mon}</td>
+                    <td class="text-center fw-bold">${Number.isFinite(diem) ? diem.toFixed(1) : '---'}</td>
+                    <td class="text-center text-muted">${Number.isFinite(tbMon) ? tbMon.toFixed(1) : '---'}</td>
+                    <td class="text-center"><span class="score-pill-soft ${danhgia.cls}">${danhgia.text}</span></td>
+                </tr>
+            `;
+        }).join('');
+
+        const noteBox = document.getElementById('score-detail-note');
+        if (chuanhoa(hs.ghi_chu)) {
+            noteBox.classList.remove('d-none');
+            noteBox.innerHTML = `<strong>Ghi chú:</strong> ${hs.ghi_chu}`;
+        } else {
+            noteBox.classList.add('d-none');
+            noteBox.innerHTML = '';
+        }
+
+        renderbieudohocsinh(hs, tbLopTheoMon);
+    }
+
+    function renderbieudohocsinh(hs, tbLopTheoMon) {
+        const canvas = document.getElementById('studentScoreChart');
+        if (!canvas) return;
+
+        if (studentScoreChart) studentScoreChart.destroy();
+
+        studentScoreChart = new Chart(canvas, {
+            type: 'radar',
+            data: {
+                labels: monHocHKI,
+                datasets: [
+                    {
+                        label: 'Học sinh',
+                        data: monHocHKI.map(mon => laydiemmon(hs, mon) ?? 0),
+                        backgroundColor: 'rgba(37, 99, 235, 0.18)',
+                        borderColor: '#2563eb',
+                        pointBackgroundColor: '#2563eb'
+                    },
+                    {
+                        label: 'Trung bình lớp',
+                        data: monHocHKI.map(mon => Number(tbLopTheoMon[mon]) || 0),
+                        backgroundColor: 'rgba(34, 197, 94, 0.12)',
+                        borderColor: '#16a34a',
+                        pointBackgroundColor: '#16a34a'
+                    }
+                ]
+            },
+            options: {
+                maintainAspectRatio: false,
+                scales: {
+                    r: {
+                        suggestedMin: 0,
+                        suggestedMax: 10,
+                        ticks: {
+                            stepSize: 2
+                        }
+                    }
+                },
+                plugins: {
+                    legend: {
+                        position: 'bottom'
+                    }
+                }
+            }
+        });
+    }
+
+
+    window.onload = khoitao;
+</script>
+
+</body>
+</html>

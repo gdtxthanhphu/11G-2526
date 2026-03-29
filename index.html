@@ -670,6 +670,203 @@
         }
 
 
+        .progress-hero {
+            background: linear-gradient(135deg, #0f172a 0%, #1d4ed8 60%, #38bdf8 100%);
+            border-radius: 28px;
+            color: white;
+            padding: 28px;
+            box-shadow: 0 18px 40px rgba(37, 99, 235, 0.18);
+            margin-bottom: 24px;
+        }
+
+        .progress-hero-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(255,255,255,0.12);
+            border: 1px solid rgba(255,255,255,0.18);
+            color: #e0f2fe;
+            padding: 8px 14px;
+            border-radius: 999px;
+            font-size: 0.82rem;
+            font-weight: 700;
+            margin-bottom: 14px;
+        }
+
+        .progress-filter-card {
+            background: rgba(255,255,255,0.1);
+            border: 1px solid rgba(255,255,255,0.18);
+            border-radius: 22px;
+            padding: 18px;
+            backdrop-filter: blur(8px);
+        }
+
+        .progress-filter-card label {
+            font-weight: 700;
+            color: rgba(255,255,255,0.92);
+        }
+
+        .progress-filter-card .form-control,
+        .progress-filter-card .form-select {
+            border-radius: 14px;
+            min-height: 46px;
+            border: 1px solid rgba(255,255,255,0.2);
+            box-shadow: none;
+        }
+
+        .progress-stat-grid {
+            display: grid;
+            grid-template-columns: repeat(4, minmax(0, 1fr));
+            gap: 14px;
+            margin-top: 24px;
+        }
+
+        .progress-stat-card {
+            background: rgba(255,255,255,0.1);
+            border: 1px solid rgba(255,255,255,0.16);
+            border-radius: 22px;
+            padding: 18px;
+            min-height: 118px;
+        }
+
+        .progress-stat-label {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: rgba(255,255,255,0.82);
+            font-size: 0.84rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+            margin-bottom: 12px;
+        }
+
+        .progress-stat-icon {
+            width: 34px;
+            height: 34px;
+            border-radius: 12px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(255,255,255,0.18);
+            color: white;
+        }
+
+        .progress-stat-value {
+            font-size: 1.85rem;
+            line-height: 1;
+            font-weight: 800;
+            margin-bottom: 6px;
+        }
+
+        .progress-stat-note {
+            color: rgba(255,255,255,0.72);
+            font-size: 0.9rem;
+        }
+
+        .progress-list {
+            display: grid;
+            gap: 16px;
+        }
+
+        .progress-card {
+            background: linear-gradient(180deg, #ffffff 0%, #f8fbff 100%);
+            border: 1px solid #e5edf7;
+            border-radius: 22px;
+            padding: 18px;
+            box-shadow: 0 10px 24px rgba(15, 23, 42, 0.05);
+        }
+
+        .progress-card-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 14px;
+            margin-bottom: 14px;
+        }
+
+        .progress-student-name {
+            font-size: 1.1rem;
+            font-weight: 800;
+            color: #0f172a;
+            margin-bottom: 4px;
+        }
+
+        .progress-meta {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 10px;
+        }
+
+        .progress-body {
+            display: grid;
+            grid-template-columns: 1.15fr 0.85fr;
+            gap: 18px;
+            margin-top: 14px;
+        }
+
+        .progress-text-box {
+            background: #ffffff;
+            border: 1px solid #e2e8f0;
+            border-radius: 18px;
+            padding: 16px;
+            height: 100%;
+        }
+
+        .progress-text-title {
+            font-size: 0.82rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            color: #64748b;
+            margin-bottom: 8px;
+            letter-spacing: 0.04em;
+        }
+
+        .progress-text-content {
+            color: #1e293b;
+            line-height: 1.65;
+            white-space: pre-line;
+        }
+
+        .progress-metric-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 12px;
+        }
+
+        .progress-metric-card {
+            background: #ffffff;
+            border: 1px solid #e2e8f0;
+            border-radius: 18px;
+            padding: 14px;
+        }
+
+        .progress-metric-label {
+            font-size: 0.78rem;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+            color: #64748b;
+            font-weight: 700;
+            margin-bottom: 6px;
+        }
+
+        .progress-metric-value {
+            font-size: 1.2rem;
+            font-weight: 800;
+            color: #0f172a;
+        }
+
+        .progress-empty {
+            border: 1px dashed #cbd5e1;
+            border-radius: 18px;
+            padding: 22px;
+            background: #f8fafc;
+            color: #64748b;
+            font-style: italic;
+        }
+
+
         @media (max-width: 1200px) {
             .activity-overview-grid {
                 grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -706,6 +903,18 @@
             .activity-value-badge {
                 width: fit-content;
             }
+
+            .progress-stat-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .progress-body {
+                grid-template-columns: 1fr;
+            }
+
+            .progress-card-top {
+                flex-direction: column;
+            }
         }
     </style>
 </head>
@@ -733,6 +942,9 @@
                 </a>
                 <a class="nav-link" onclick="chuyentab('hoat-dong', this)">
                     <i class="fas fa-bolt me-2"></i>Hoạt động
+                </a>
+                <a class="nav-link" onclick="chuyentab('tien-do', this); rendertiendo()">
+                    <i class="fas fa-chart-line me-2"></i>Tiến độ
                 </a>
             </nav>
         </div>
@@ -1244,12 +1456,101 @@
                     </div>
                 </div>
             </div>
+
+            <div id="section-tien-do" class="content-section">
+                <div class="progress-hero">
+                    <div class="row g-4 align-items-center">
+                        <div class="col-lg-7">
+                            <div class="progress-hero-badge">
+                                <i class="fas fa-chart-line"></i>
+                                Theo dõi nhận xét tự động
+                            </div>
+                            <h3 class="fw-bold mb-2">Tiến độ học sinh theo nhận xét tự động</h3>
+                            <p class="mb-0" style="color: rgba(255,255,255,0.84); max-width: 720px;">
+                                Tổng hợp nhanh mức đánh giá, xu hướng, nhận xét tự động và gợi ý cho GVCN từ sheet
+                                <strong>Nhận xét tự động</strong> để theo dõi tiến độ từng học sinh.
+                            </p>
+                        </div>
+                        <div class="col-lg-5">
+                            <div class="progress-filter-card">
+                                <div class="row g-3">
+                                    <div class="col-12">
+                                        <label class="mb-2">Tìm học sinh</label>
+                                        <input id="progress-search-input" type="text" class="form-control" placeholder="Nhập tên học sinh..." oninput="locTiendo()">
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="mb-2">Lọc loại</label>
+                                        <select id="progress-type-filter" class="form-select" onchange="locTiendo()">
+                                            <option value="Tất cả">Tất cả</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="mb-2">Lọc mức đánh giá</label>
+                                        <select id="progress-rating-filter" class="form-select" onchange="locTiendo()">
+                                            <option value="Tất cả">Tất cả</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="progress-stat-grid">
+                        <div class="progress-stat-card">
+                            <div class="progress-stat-label">
+                                <span class="progress-stat-icon"><i class="fas fa-file-lines"></i></span>
+                                Tổng nhận xét
+                            </div>
+                            <div class="progress-stat-value" id="progress-stat-total">0</div>
+                            <div class="progress-stat-note">Tổng số bản ghi từ sheet Nhận xét tự động</div>
+                        </div>
+                        <div class="progress-stat-card">
+                            <div class="progress-stat-label">
+                                <span class="progress-stat-icon"><i class="fas fa-user-check"></i></span>
+                                Học sinh có nhận xét
+                            </div>
+                            <div class="progress-stat-value" id="progress-stat-students">0</div>
+                            <div class="progress-stat-note">Số học sinh đang có dữ liệu tiến độ</div>
+                        </div>
+                        <div class="progress-stat-card">
+                            <div class="progress-stat-label">
+                                <span class="progress-stat-icon"><i class="fas fa-triangle-exclamation"></i></span>
+                                Cần quan tâm
+                            </div>
+                            <div class="progress-stat-value" id="progress-stat-concern">0</div>
+                            <div class="progress-stat-note">Số bản ghi mức đánh giá cần quan tâm</div>
+                        </div>
+                        <div class="progress-stat-card">
+                            <div class="progress-stat-label">
+                                <span class="progress-stat-icon"><i class="fas fa-arrow-trend-up"></i></span>
+                                Tiến bộ
+                            </div>
+                            <div class="progress-stat-value" id="progress-stat-improving">0</div>
+                            <div class="progress-stat-note">Số bản ghi có xu hướng tiến bộ</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="glass-card">
+                    <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-3">
+                        <div>
+                            <h6 class="fw-bold mb-1">
+                                <i class="fas fa-user-clock me-2 text-primary"></i>Danh sách tiến độ học sinh
+                            </h6>
+                            <div class="text-muted">Hiển thị trực tiếp dữ liệu từ API Apps Script, key <strong>nhanXetTuDong</strong>.</div>
+                        </div>
+                        <div class="text-muted small" id="progress-count-label">0 bản ghi</div>
+                    </div>
+                    <div id="progress-list" class="progress-list"></div>
+                </div>
+            </div>
+            </div>
         </div>
     </div>
 </div>
 
 <script>
-    const apiurl = 'https://script.google.com/macros/s/AKfycbzOMYHl-8f1svXCxI_jgiHKCjMy6ku9OCAr6A57daVmWwmbga1UrJ7_04sCv2bh6zaUhQ/exec';
+    const apiurl = 'https://script.google.com/macros/s/AKfycbxcjwOMkxS8tkGh4qLOVV8fkmiI0zrJupEPiCUqB13bR9ccCbYxDtMDuV5RJuVz-aG0Eg/exec';
 
     const dulieu = {
         info: [],
@@ -1258,13 +1559,17 @@
         dashTuan: [],
         dashTopTuan: [],
         duty: [],
-        tongKetHocKyI: []
+        tongKetHocKyI: [],
+        nhanXetTuDong: []
     };
 
     const bochon = {
         tuan: '',
         hocsinh: ''
     };
+
+    let trangThaiApiTienDo = 'unknown';
+    let metaApi = {};
 
     function chuanhoa(text) {
         return (text || '').toString().trim();
@@ -1335,6 +1640,11 @@
     }
 
     function capnhatdulieu(raw = {}) {
+        metaApi = raw.meta || {};
+        trangThaiApiTienDo = Object.prototype.hasOwnProperty.call(raw, 'nhanXetTuDong')
+            ? (Array.isArray(raw.nhanXetTuDong) ? 'loaded' : 'invalid')
+            : 'missing-key';
+
         dulieu.info = Array.isArray(raw.info) ? raw.info : [];
         dulieu.dash = Array.isArray(raw.dash) ? raw.dash : [];
         dulieu.conduct = Array.isArray(raw.conduct) ? raw.conduct : [];
@@ -1344,6 +1654,7 @@
         dulieu.tongKetHocKyI = Array.isArray(raw.tongKetHocKyI)
             ? raw.tongKetHocKyI
             : (Array.isArray(raw.data) ? raw.data : []);
+        dulieu.nhanXetTuDong = Array.isArray(raw.nhanXetTuDong) ? raw.nhanXetTuDong : [];
     }
 
     function chuyentab(id, el) {
@@ -1366,14 +1677,19 @@
         document.getElementById('loader').classList.remove('d-none');
 
         try {
-            const res = await fetch(apiurl);
+            const apiNoCacheUrl = `${apiurl}${apiurl.includes('?') ? '&' : '?'}t=${Date.now()}`;
+            const res = await fetch(apiNoCacheUrl, { cache: 'no-store' });
             const raw = await res.json();
             capnhatdulieu(raw);
+            console.log('API meta:', metaApi);
+            console.log('nhanXetTuDong records:', Array.isArray(raw.nhanXetTuDong) ? raw.nhanXetTuDong.length : 'missing');
 
             renderkpi();
             renderdanhsachhocsinh();
             renderdanhsachtuan();
             renderbieudo();
+            khoitaoBoLocTienDo();
+            rendertiendo();
         } catch (error) {
             console.error('Lỗi tải dữ liệu:', error);
         }
@@ -1909,6 +2225,212 @@
                 `).join('')}
             </div>
         `;
+    }
+
+
+    const boLocTienDo = {
+        tuKhoa: '',
+        loai: 'Tất cả',
+        mucDanhGia: 'Tất cả'
+    };
+
+    function dinhdangthoigian(value) {
+        if (!value) return '---';
+        const d = new Date(value);
+        if (isNaN(d.getTime())) return value;
+        const ngay = String(d.getDate()).padStart(2, '0');
+        const thang = String(d.getMonth() + 1).padStart(2, '0');
+        const gio = String(d.getHours()).padStart(2, '0');
+        const phut = String(d.getMinutes()).padStart(2, '0');
+        return `${ngay}/${thang}/${d.getFullYear()} ${gio}:${phut}`;
+    }
+
+    function laysotiendo(value) {
+        const so = Number(value);
+        return Number.isFinite(so) ? so : 0;
+    }
+
+    function sapxeptiendo(a, b) {
+        const da = new Date(a['Cập nhật lúc'] || a['Cap nhat luc'] || 0).getTime() || 0;
+        const db = new Date(b['Cập nhật lúc'] || b['Cap nhat luc'] || 0).getTime() || 0;
+        return db - da;
+    }
+
+    function laydulieutiendo() {
+        return [...(Array.isArray(dulieu.nhanXetTuDong) ? dulieu.nhanXetTuDong : [])].sort(sapxeptiendo);
+    }
+
+    function laychipxeploai(value) {
+        const key = khoachuan(value);
+        if (key.includes('tichcuc') || key.includes('tot')) return 'activity-chip green';
+        if (key.includes('tienbo')) return 'activity-chip blue';
+        if (key.includes('canquntam') || key.includes('canquantam') || key.includes('nhacnho')) return 'activity-chip red';
+        if (key.includes('chunglai')) return 'activity-chip amber';
+        return 'activity-chip slate';
+    }
+
+    function taomotaTiendo(item) {
+        const loai = chuanhoa(item['Loại']) || '---';
+        const ky = chuanhoa(item['Kỳ']) || '---';
+        const nam = chuanhoa(item['Năm']);
+        const thang = chuanhoa(item['Tháng']);
+        const tuan = chuanhoa(item['Tuần']);
+        const phan = [];
+        if (ky && ky !== '---') phan.push(ky);
+        if (tuan) phan.push(`Tuần ${tuan}`);
+        if (thang) phan.push(`Tháng ${thang}`);
+        if (nam) phan.push(`Năm ${nam}`);
+        return `${loai}${phan.length ? ' • ' + phan.join(' • ') : ''}`;
+    }
+
+    function khoitaoBoLocTienDo() {
+        const ds = laydulieutiendo();
+        const typeSelect = document.getElementById('progress-type-filter');
+        const ratingSelect = document.getElementById('progress-rating-filter');
+        if (!typeSelect || !ratingSelect) return;
+
+        const dsLoai = [...new Set(ds.map(item => chuanhoa(item['Loại'])).filter(Boolean))].sort((a, b) => a.localeCompare(b, 'vi'));
+        const dsMuc = [...new Set(ds.map(item => chuanhoa(item['Mức đánh giá'])).filter(Boolean))].sort((a, b) => a.localeCompare(b, 'vi'));
+
+        typeSelect.innerHTML = '<option value="Tất cả">Tất cả</option>' + dsLoai.map(item => `<option value="${item}">${item}</option>`).join('');
+        ratingSelect.innerHTML = '<option value="Tất cả">Tất cả</option>' + dsMuc.map(item => `<option value="${item}">${item}</option>`).join('');
+    }
+
+    function locTiendo() {
+        boLocTienDo.tuKhoa = chuanhoa(document.getElementById('progress-search-input')?.value).toLowerCase();
+        boLocTienDo.loai = document.getElementById('progress-type-filter')?.value || 'Tất cả';
+        boLocTienDo.mucDanhGia = document.getElementById('progress-rating-filter')?.value || 'Tất cả';
+        rendertiendo();
+    }
+
+    function rendertiendo() {
+        const listEl = document.getElementById('progress-list');
+        if (!listEl) return;
+
+        const dsGoc = laydulieutiendo();
+        const ds = dsGoc.filter(item => {
+            const ten = chuanhoa(item['Học sinh']).toLowerCase();
+            const loai = chuanhoa(item['Loại']);
+            const muc = chuanhoa(item['Mức đánh giá']);
+            const hopTuKhoa = !boLocTienDo.tuKhoa || ten.includes(boLocTienDo.tuKhoa);
+            const hopLoai = boLocTienDo.loai === 'Tất cả' || loai === boLocTienDo.loai;
+            const hopMuc = boLocTienDo.mucDanhGia === 'Tất cả' || muc === boLocTienDo.mucDanhGia;
+            return hopTuKhoa && hopLoai && hopMuc;
+        });
+
+        const concernCount = dsGoc.filter(item => khoachuan(item['Mức đánh giá']).includes('canquantam')).length;
+        const improvingCount = dsGoc.filter(item => khoachuan(item['Xu hướng']).includes('tienbo')).length;
+        const studentCount = new Set(dsGoc.map(item => khoachuan(item['Học sinh'])).filter(Boolean)).size;
+
+        const totalEl = document.getElementById('progress-stat-total');
+        const studentsEl = document.getElementById('progress-stat-students');
+        const concernEl = document.getElementById('progress-stat-concern');
+        const improvingEl = document.getElementById('progress-stat-improving');
+        const countLabel = document.getElementById('progress-count-label');
+
+        if (totalEl) totalEl.innerText = dsGoc.length;
+        if (studentsEl) studentsEl.innerText = studentCount;
+        if (concernEl) concernEl.innerText = concernCount;
+        if (improvingEl) improvingEl.innerText = improvingCount;
+        if (countLabel) countLabel.innerText = `${ds.length} bản ghi`;
+
+        if (!ds.length) {
+            if (!dsGoc.length && trangThaiApiTienDo === 'missing-key') {
+                listEl.innerHTML = `
+                    <div class="progress-empty">
+                        API hiện chưa trả về key <strong>nhanXetTuDong</strong> nên menu Tiến độ chưa có dữ liệu.<br>
+                        Hãy mở lại Web App sau khi <strong>Deploy</strong> phiên bản Apps Script mới có sheet <strong>Nhận xét tự động</strong>.
+                    </div>
+                `;
+            } else if (!dsGoc.length && trangThaiApiTienDo === 'invalid') {
+                listEl.innerHTML = `
+                    <div class="progress-empty">
+                        API có phản hồi nhưng key <strong>nhanXetTuDong</strong> không đúng định dạng mảng dữ liệu.
+                    </div>
+                `;
+            } else if (!dsGoc.length) {
+                listEl.innerHTML = `
+                    <div class="progress-empty">
+                        API đã trả về key <strong>nhanXetTuDong</strong> nhưng hiện chưa có bản ghi nào.<br>
+                        Hãy kiểm tra sheet <strong>Nhận xét tự động</strong> trong file Google Sheets đang được Apps Script sử dụng.
+                    </div>
+                `;
+            } else {
+                listEl.innerHTML = '<div class="progress-empty">Không có dữ liệu tiến độ phù hợp với bộ lọc hiện tại.</div>';
+            }
+            return;
+        }
+
+        listEl.innerHTML = ds.map(item => {
+            const hocSinh = chuanhoa(item['Học sinh']) || '---';
+            const mucDanhGia = chuanhoa(item['Mức đánh giá']) || 'Chưa rõ';
+            const xuHuong = chuanhoa(item['Xu hướng']) || 'Chưa rõ';
+            const nhanXet = chuanhoa(item['Nhận xét tự động']) || 'Chưa có nhận xét tự động.';
+            const goiY = chuanhoa(item['Gợi ý cho GVCN']) || 'Chưa có gợi ý.';
+            const hanhKiem = chuanhoa(item['Hạnh kiểm']) || '---';
+            const viPhamNoiBat = chuanhoa(item['Vi phạm nổi bật']) || '---';
+            const diemNoiBat = chuanhoa(item['Điểm nổi bật']) || '---';
+            const capNhat = item['Cập nhật lúc'] || item['Cap nhat luc'] || '';
+            return `
+                <div class="progress-card">
+                    <div class="progress-card-top">
+                        <div>
+                            <div class="progress-student-name">${hocSinh}</div>
+                            <div class="text-muted">${taomotaTiendo(item)}</div>
+                            <div class="progress-meta">
+                                <span class="activity-chip blue"><i class="fas fa-shield-heart"></i> Hạnh kiểm: ${hanhKiem}</span>
+                                <span class="${laychipxeploai(mucDanhGia)}"><i class="fas fa-layer-group"></i> ${mucDanhGia}</span>
+                                <span class="${laychipxeploai(xuHuong)}"><i class="fas fa-arrow-trend-up"></i> ${xuHuong}</span>
+                            </div>
+                        </div>
+                        <div class="activity-value-badge good">
+                            <i class="fas fa-clock"></i>
+                            ${dinhdangthoigian(capNhat)}
+                        </div>
+                    </div>
+
+                    <div class="progress-body">
+                        <div class="d-flex flex-column gap-3">
+                            <div class="progress-text-box">
+                                <div class="progress-text-title">Nhận xét tự động</div>
+                                <div class="progress-text-content">${nhanXet}</div>
+                            </div>
+                            <div class="progress-text-box">
+                                <div class="progress-text-title">Gợi ý cho GVCN</div>
+                                <div class="progress-text-content">${goiY}</div>
+                            </div>
+                        </div>
+
+                        <div class="progress-metric-grid">
+                            <div class="progress-metric-card">
+                                <div class="progress-metric-label">Điểm tốt</div>
+                                <div class="progress-metric-value">${laysotiendo(item['Điểm tốt'])}</div>
+                            </div>
+                            <div class="progress-metric-card">
+                                <div class="progress-metric-label">Phát biểu đúng</div>
+                                <div class="progress-metric-value">${laysotiendo(item['Phát biểu đúng'])}</div>
+                            </div>
+                            <div class="progress-metric-card">
+                                <div class="progress-metric-label">Điểm xấu</div>
+                                <div class="progress-metric-value">${laysotiendo(item['Điểm xấu'])}</div>
+                            </div>
+                            <div class="progress-metric-card">
+                                <div class="progress-metric-label">Tổng vi phạm</div>
+                                <div class="progress-metric-value">${laysotiendo(item['Tổng vi phạm'])}</div>
+                            </div>
+                            <div class="progress-metric-card" style="grid-column: 1 / -1;">
+                                <div class="progress-metric-label">Vi phạm nổi bật</div>
+                                <div class="progress-metric-value" style="font-size:1rem; line-height:1.5;">${viPhamNoiBat}</div>
+                            </div>
+                            <div class="progress-metric-card" style="grid-column: 1 / -1;">
+                                <div class="progress-metric-label">Điểm nổi bật</div>
+                                <div class="progress-metric-value" style="font-size:1rem; line-height:1.5;">${diemNoiBat}</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }).join('');
     }
 
     let dulieuDiemHKI = [];

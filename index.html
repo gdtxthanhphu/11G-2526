@@ -1459,36 +1459,74 @@
 
             <div id="section-tien-do" class="content-section">
                 <div class="progress-hero">
-                    <div class="row g-4 align-items-center">
-                        <div class="col-lg-7">
+                    <div class="row g-4">
+                        <div class="col-12">
                             <div class="progress-hero-badge">
                                 <i class="fas fa-chart-line"></i>
                                 Theo dõi nhận xét tự động
                             </div>
                             <h3 class="fw-bold mb-2">Tiến độ học sinh theo nhận xét tự động</h3>
-                            <p class="mb-0" style="color: rgba(255,255,255,0.84); max-width: 720px;">
-                                Tổng hợp nhanh mức đánh giá, xu hướng, nhận xét tự động và gợi ý cho GVCN từ sheet
-                                <strong>Nhận xét tự động</strong> để theo dõi tiến độ từng học sinh.
+                            <p class="mb-0" style="color: rgba(255,255,255,0.84); max-width: 900px;">
+                                Chọn <strong>tên học sinh</strong>, <strong>tuần</strong>, <strong>tháng</strong>, <strong>năm</strong>,
+                                <strong>kỳ</strong>, <strong>loại</strong> hoặc <strong>mức đánh giá</strong> để theo dõi chi tiết tiến độ
+                                từ sheet <strong>Nhận xét tự động</strong>.
                             </p>
                         </div>
-                        <div class="col-lg-5">
+
+                        <div class="col-12">
                             <div class="progress-filter-card">
                                 <div class="row g-3">
-                                    <div class="col-12">
-                                        <label class="mb-2">Tìm học sinh</label>
-                                        <input id="progress-search-input" type="text" class="form-control" placeholder="Nhập tên học sinh..." oninput="locTiendo()">
+                                    <div class="col-lg-3 col-md-6">
+                                        <label class="mb-2">Chọn học sinh</label>
+                                        <select id="progress-student-filter" class="form-select" onchange="locTiendo()">
+                                            <option value="Tất cả">Tất cả học sinh</option>
+                                        </select>
                                     </div>
-                                    <div class="col-md-6">
-                                        <label class="mb-2">Lọc loại</label>
+                                    <div class="col-lg-3 col-md-6">
+                                        <label class="mb-2">Chọn tuần</label>
+                                        <select id="progress-week-filter" class="form-select" onchange="locTiendo()">
+                                            <option value="Tất cả">Tất cả tuần</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-lg-2 col-md-4">
+                                        <label class="mb-2">Chọn tháng</label>
+                                        <select id="progress-month-filter" class="form-select" onchange="locTiendo()">
+                                            <option value="Tất cả">Tất cả tháng</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-lg-2 col-md-4">
+                                        <label class="mb-2">Chọn năm</label>
+                                        <select id="progress-year-filter" class="form-select" onchange="locTiendo()">
+                                            <option value="Tất cả">Tất cả năm</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-lg-2 col-md-4">
+                                        <label class="mb-2">Chọn kỳ</label>
+                                        <select id="progress-term-filter" class="form-select" onchange="locTiendo()">
+                                            <option value="Tất cả">Tất cả kỳ</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-lg-3 col-md-6">
+                                        <label class="mb-2">Loại</label>
                                         <select id="progress-type-filter" class="form-select" onchange="locTiendo()">
-                                            <option value="Tất cả">Tất cả</option>
+                                            <option value="Tất cả">Tất cả loại</option>
                                         </select>
                                     </div>
-                                    <div class="col-md-6">
-                                        <label class="mb-2">Lọc mức đánh giá</label>
+                                    <div class="col-lg-3 col-md-6">
+                                        <label class="mb-2">Mức đánh giá</label>
                                         <select id="progress-rating-filter" class="form-select" onchange="locTiendo()">
-                                            <option value="Tất cả">Tất cả</option>
+                                            <option value="Tất cả">Tất cả mức đánh giá</option>
                                         </select>
+                                    </div>
+                                    <div class="col-lg-3 col-md-6 d-flex align-items-end">
+                                        <button type="button" class="btn btn-light w-100 rounded-pill fw-bold py-2" onclick="resetBoLocTienDo()">
+                                            <i class="fas fa-rotate-left me-2"></i>Xóa bộ lọc
+                                        </button>
+                                    </div>
+                                    <div class="col-lg-3 col-md-6 d-flex align-items-end">
+                                        <div class="w-100 text-white-50 small text-md-end">
+                                            Lọc đồng thời theo học sinh, thời gian và mức đánh giá.
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -1537,7 +1575,7 @@
                             <h6 class="fw-bold mb-1">
                                 <i class="fas fa-user-clock me-2 text-primary"></i>Danh sách tiến độ học sinh
                             </h6>
-                            <div class="text-muted">Hiển thị trực tiếp dữ liệu từ API Apps Script, key <strong>nhanXetTuDong</strong>.</div>
+                            <div class="text-muted">Lọc trực tiếp dữ liệu từ API Apps Script theo học sinh, tuần, tháng, năm, kỳ, loại và mức đánh giá.</div>
                         </div>
                         <div class="text-muted small" id="progress-count-label">0 bản ghi</div>
                     </div>
@@ -2228,11 +2266,106 @@
     }
 
 
+
     const boLocTienDo = {
-        tuKhoa: '',
+        hocSinh: 'Tất cả',
+        tuan: 'Tất cả',
+        thang: 'Tất cả',
+        nam: 'Tất cả',
+        ky: 'Tất cả',
         loai: 'Tất cả',
         mucDanhGia: 'Tất cả'
     };
+
+    const cauHinhBoLocTienDo = [
+        {
+            key: 'hocSinh',
+            selectId: 'progress-student-filter',
+            defaultLabel: 'Tất cả học sinh',
+            getter: (item) => item.hocSinh,
+            sortFn: (a, b) => a.localeCompare(b, 'vi')
+        },
+        {
+            key: 'tuan',
+            selectId: 'progress-week-filter',
+            defaultLabel: 'Tất cả tuần',
+            getter: (item) => item.tuan,
+            sortFn: sapxepgiatriloc
+        },
+        {
+            key: 'thang',
+            selectId: 'progress-month-filter',
+            defaultLabel: 'Tất cả tháng',
+            getter: (item) => item.thang,
+            sortFn: sapxepgiatriloc
+        },
+        {
+            key: 'nam',
+            selectId: 'progress-year-filter',
+            defaultLabel: 'Tất cả năm',
+            getter: (item) => item.nam,
+            sortFn: sapxepgiatriloc
+        },
+        {
+            key: 'ky',
+            selectId: 'progress-term-filter',
+            defaultLabel: 'Tất cả kỳ',
+            getter: (item) => item.ky,
+            sortFn: (a, b) => a.localeCompare(b, 'vi')
+        },
+        {
+            key: 'loai',
+            selectId: 'progress-type-filter',
+            defaultLabel: 'Tất cả loại',
+            getter: (item) => item.loai,
+            sortFn: (a, b) => a.localeCompare(b, 'vi')
+        },
+        {
+            key: 'mucDanhGia',
+            selectId: 'progress-rating-filter',
+            defaultLabel: 'Tất cả mức đánh giá',
+            getter: (item) => item.mucDanhGia,
+            sortFn: (a, b) => a.localeCompare(b, 'vi')
+        }
+    ];
+
+    function layGiaTriTienDo(item, danhSachCot = []) {
+        if (!item || !danhSachCot.length) return '';
+        for (const cot of danhSachCot) {
+            if (item[cot] !== undefined && item[cot] !== null && chuanhoa(item[cot]) !== '') {
+                return item[cot];
+            }
+        }
+        return '';
+    }
+
+    function chuanHoaBanGhiTienDo(item) {
+        const capNhat = layGiaTriTienDo(item, ['Cập nhật lúc', 'Cap nhat luc']);
+        const capNhatMs = new Date(capNhat || 0).getTime() || 0;
+
+        return {
+            raw: item,
+            hocSinh: chuanhoa(layGiaTriTienDo(item, ['Học sinh', 'Hoc sinh'])),
+            loai: chuanhoa(layGiaTriTienDo(item, ['Loại', 'Loai'])),
+            ky: chuanhoa(layGiaTriTienDo(item, ['Kỳ', 'Ky'])),
+            nam: chuanhoa(layGiaTriTienDo(item, ['Năm', 'Nam'])),
+            thang: chuanhoa(layGiaTriTienDo(item, ['Tháng', 'Thang'])),
+            tuan: chuanhoa(layGiaTriTienDo(item, ['Tuần', 'Tuan'])),
+            mucDanhGia: chuanhoa(layGiaTriTienDo(item, ['Mức đánh giá', 'Muc danh gia'])),
+            xuHuong: chuanhoa(layGiaTriTienDo(item, ['Xu hướng', 'Xu huong'])),
+            nhanXet: chuanhoa(layGiaTriTienDo(item, ['Nhận xét tự động', 'Nhan xet tu dong'])),
+            goiY: chuanhoa(layGiaTriTienDo(item, ['Gợi ý cho GVCN', 'Goi y cho GVCN'])),
+            hanhKiem: chuanhoa(layGiaTriTienDo(item, ['Hạnh kiểm', 'Hanh kiem'])),
+            viPhamNoiBat: chuanhoa(layGiaTriTienDo(item, ['Vi phạm nổi bật', 'Vi pham noi bat'])),
+            diemNoiBat: chuanhoa(layGiaTriTienDo(item, ['Điểm nổi bật', 'Diem noi bat'])),
+            diemTot: laysotiendo(layGiaTriTienDo(item, ['Điểm tốt', 'Diem tot'])),
+            phatBieuDung: laysotiendo(layGiaTriTienDo(item, ['Phát biểu đúng', 'Phat bieu dung'])),
+            diemXau: laysotiendo(layGiaTriTienDo(item, ['Điểm xấu', 'Diem xau'])),
+            tongViPham: laysotiendo(layGiaTriTienDo(item, ['Tổng vi phạm', 'Tong vi pham'])),
+            capNhat,
+            capNhatMs
+        };
+    }
 
     function dinhdangthoigian(value) {
         if (!value) return '---';
@@ -2251,13 +2384,25 @@
     }
 
     function sapxeptiendo(a, b) {
-        const da = new Date(a['Cập nhật lúc'] || a['Cap nhat luc'] || 0).getTime() || 0;
-        const db = new Date(b['Cập nhật lúc'] || b['Cap nhat luc'] || 0).getTime() || 0;
-        return db - da;
+        return (b.capNhatMs || 0) - (a.capNhatMs || 0);
+    }
+
+    function sapxepgiatriloc(a, b) {
+        const soA = Number(a);
+        const soB = Number(b);
+
+        if (Number.isFinite(soA) && Number.isFinite(soB)) {
+            return soA - soB;
+        }
+
+        return String(a).localeCompare(String(b), 'vi', { numeric: true, sensitivity: 'base' });
     }
 
     function laydulieutiendo() {
-        return [...(Array.isArray(dulieu.nhanXetTuDong) ? dulieu.nhanXetTuDong : [])].sort(sapxeptiendo);
+        return (Array.isArray(dulieu.nhanXetTuDong) ? dulieu.nhanXetTuDong : [])
+            .map(chuanHoaBanGhiTienDo)
+            .filter(item => item.hocSinh || item.nhanXet || item.goiY)
+            .sort(sapxeptiendo);
     }
 
     function laychipxeploai(value) {
@@ -2270,36 +2415,92 @@
     }
 
     function taomotaTiendo(item) {
-        const loai = chuanhoa(item['Loại']) || '---';
-        const ky = chuanhoa(item['Kỳ']) || '---';
-        const nam = chuanhoa(item['Năm']);
-        const thang = chuanhoa(item['Tháng']);
-        const tuan = chuanhoa(item['Tuần']);
         const phan = [];
-        if (ky && ky !== '---') phan.push(ky);
-        if (tuan) phan.push(`Tuần ${tuan}`);
-        if (thang) phan.push(`Tháng ${thang}`);
-        if (nam) phan.push(`Năm ${nam}`);
-        return `${loai}${phan.length ? ' • ' + phan.join(' • ') : ''}`;
+        if (item.loai) phan.push(item.loai);
+        if (item.ky) phan.push(item.ky);
+        if (item.tuan) phan.push(`Tuần ${item.tuan}`);
+        if (item.thang) phan.push(`Tháng ${item.thang}`);
+        if (item.nam) phan.push(`Năm ${item.nam}`);
+        return phan.length ? phan.join(' • ') : 'Chưa có thông tin thời gian';
+    }
+
+    function locBanGhiTienDoTheoBoLoc(item, filters, ignoreKey = '') {
+        if (!item) return false;
+
+        for (const cfg of cauHinhBoLocTienDo) {
+            if (cfg.key === ignoreKey) continue;
+            const filterValue = filters[cfg.key] || 'Tất cả';
+            const itemValue = cfg.getter(item);
+
+            if (filterValue !== 'Tất cả' && itemValue !== filterValue) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    function dongBoGiaTriBoLocTienDoTuUI() {
+        cauHinhBoLocTienDo.forEach(cfg => {
+            const select = document.getElementById(cfg.selectId);
+            boLocTienDo[cfg.key] = select?.value || 'Tất cả';
+        });
+    }
+
+    function taoHtmlOptionsTienDo(options, defaultLabel) {
+        return `<option value="Tất cả">${defaultLabel}</option>` +
+            options.map(item => `<option value="${item}">${item}</option>`).join('');
+    }
+
+    function capNhatSelectTienDoRangBuoc() {
+        const dsGoc = laydulieutiendo();
+
+        cauHinhBoLocTienDo.forEach(cfg => {
+            const select = document.getElementById(cfg.selectId);
+            if (!select) return;
+
+            const dsTheoDieuKien = dsGoc.filter(item => locBanGhiTienDoTheoBoLoc(item, boLocTienDo, cfg.key));
+            const options = [...new Set(dsTheoDieuKien.map(cfg.getter).filter(Boolean))].sort(cfg.sortFn);
+
+            const giaTriDangChon = boLocTienDo[cfg.key] || 'Tất cả';
+            select.innerHTML = taoHtmlOptionsTienDo(options, cfg.defaultLabel);
+
+            if (giaTriDangChon !== 'Tất cả' && !options.includes(giaTriDangChon)) {
+                boLocTienDo[cfg.key] = 'Tất cả';
+            }
+
+            select.value = boLocTienDo[cfg.key] || 'Tất cả';
+        });
     }
 
     function khoitaoBoLocTienDo() {
-        const ds = laydulieutiendo();
-        const typeSelect = document.getElementById('progress-type-filter');
-        const ratingSelect = document.getElementById('progress-rating-filter');
-        if (!typeSelect || !ratingSelect) return;
+        boLocTienDo.hocSinh = 'Tất cả';
+        boLocTienDo.tuan = 'Tất cả';
+        boLocTienDo.thang = 'Tất cả';
+        boLocTienDo.nam = 'Tất cả';
+        boLocTienDo.ky = 'Tất cả';
+        boLocTienDo.loai = 'Tất cả';
+        boLocTienDo.mucDanhGia = 'Tất cả';
 
-        const dsLoai = [...new Set(ds.map(item => chuanhoa(item['Loại'])).filter(Boolean))].sort((a, b) => a.localeCompare(b, 'vi'));
-        const dsMuc = [...new Set(ds.map(item => chuanhoa(item['Mức đánh giá'])).filter(Boolean))].sort((a, b) => a.localeCompare(b, 'vi'));
-
-        typeSelect.innerHTML = '<option value="Tất cả">Tất cả</option>' + dsLoai.map(item => `<option value="${item}">${item}</option>`).join('');
-        ratingSelect.innerHTML = '<option value="Tất cả">Tất cả</option>' + dsMuc.map(item => `<option value="${item}">${item}</option>`).join('');
+        capNhatSelectTienDoRangBuoc();
     }
 
     function locTiendo() {
-        boLocTienDo.tuKhoa = chuanhoa(document.getElementById('progress-search-input')?.value).toLowerCase();
-        boLocTienDo.loai = document.getElementById('progress-type-filter')?.value || 'Tất cả';
-        boLocTienDo.mucDanhGia = document.getElementById('progress-rating-filter')?.value || 'Tất cả';
+        dongBoGiaTriBoLocTienDoTuUI();
+        capNhatSelectTienDoRangBuoc();
+        rendertiendo();
+    }
+
+    function resetBoLocTienDo() {
+        boLocTienDo.hocSinh = 'Tất cả';
+        boLocTienDo.tuan = 'Tất cả';
+        boLocTienDo.thang = 'Tất cả';
+        boLocTienDo.nam = 'Tất cả';
+        boLocTienDo.ky = 'Tất cả';
+        boLocTienDo.loai = 'Tất cả';
+        boLocTienDo.mucDanhGia = 'Tất cả';
+
+        capNhatSelectTienDoRangBuoc();
         rendertiendo();
     }
 
@@ -2307,20 +2508,14 @@
         const listEl = document.getElementById('progress-list');
         if (!listEl) return;
 
-        const dsGoc = laydulieutiendo();
-        const ds = dsGoc.filter(item => {
-            const ten = chuanhoa(item['Học sinh']).toLowerCase();
-            const loai = chuanhoa(item['Loại']);
-            const muc = chuanhoa(item['Mức đánh giá']);
-            const hopTuKhoa = !boLocTienDo.tuKhoa || ten.includes(boLocTienDo.tuKhoa);
-            const hopLoai = boLocTienDo.loai === 'Tất cả' || loai === boLocTienDo.loai;
-            const hopMuc = boLocTienDo.mucDanhGia === 'Tất cả' || muc === boLocTienDo.mucDanhGia;
-            return hopTuKhoa && hopLoai && hopMuc;
-        });
+        dongBoGiaTriBoLocTienDoTuUI();
 
-        const concernCount = dsGoc.filter(item => khoachuan(item['Mức đánh giá']).includes('canquantam')).length;
-        const improvingCount = dsGoc.filter(item => khoachuan(item['Xu hướng']).includes('tienbo')).length;
-        const studentCount = new Set(dsGoc.map(item => khoachuan(item['Học sinh'])).filter(Boolean)).size;
+        const dsGoc = laydulieutiendo();
+        const ds = dsGoc.filter(item => locBanGhiTienDoTheoBoLoc(item, boLocTienDo));
+
+        const concernCount = ds.filter(item => khoachuan(item.mucDanhGia).includes('canquantam')).length;
+        const improvingCount = ds.filter(item => khoachuan(item.xuHuong).includes('tienbo')).length;
+        const studentCount = new Set(ds.map(item => khoachuan(item.hocSinh)).filter(Boolean)).size;
 
         const totalEl = document.getElementById('progress-stat-total');
         const studentsEl = document.getElementById('progress-stat-students');
@@ -2328,7 +2523,7 @@
         const improvingEl = document.getElementById('progress-stat-improving');
         const countLabel = document.getElementById('progress-count-label');
 
-        if (totalEl) totalEl.innerText = dsGoc.length;
+        if (totalEl) totalEl.innerText = ds.length;
         if (studentsEl) studentsEl.innerText = studentCount;
         if (concernEl) concernEl.innerText = concernCount;
         if (improvingEl) improvingEl.innerText = improvingCount;
@@ -2362,15 +2557,15 @@
         }
 
         listEl.innerHTML = ds.map(item => {
-            const hocSinh = chuanhoa(item['Học sinh']) || '---';
-            const mucDanhGia = chuanhoa(item['Mức đánh giá']) || 'Chưa rõ';
-            const xuHuong = chuanhoa(item['Xu hướng']) || 'Chưa rõ';
-            const nhanXet = chuanhoa(item['Nhận xét tự động']) || 'Chưa có nhận xét tự động.';
-            const goiY = chuanhoa(item['Gợi ý cho GVCN']) || 'Chưa có gợi ý.';
-            const hanhKiem = chuanhoa(item['Hạnh kiểm']) || '---';
-            const viPhamNoiBat = chuanhoa(item['Vi phạm nổi bật']) || '---';
-            const diemNoiBat = chuanhoa(item['Điểm nổi bật']) || '---';
-            const capNhat = item['Cập nhật lúc'] || item['Cap nhat luc'] || '';
+            const hocSinh = item.hocSinh || '---';
+            const mucDanhGia = item.mucDanhGia || 'Chưa rõ';
+            const xuHuong = item.xuHuong || 'Chưa rõ';
+            const nhanXet = item.nhanXet || 'Chưa có nhận xét tự động.';
+            const goiY = item.goiY || 'Chưa có gợi ý.';
+            const hanhKiem = item.hanhKiem || '---';
+            const viPhamNoiBat = item.viPhamNoiBat || '---';
+            const diemNoiBat = item.diemNoiBat || '---';
+
             return `
                 <div class="progress-card">
                     <div class="progress-card-top">
@@ -2385,7 +2580,7 @@
                         </div>
                         <div class="activity-value-badge good">
                             <i class="fas fa-clock"></i>
-                            ${dinhdangthoigian(capNhat)}
+                            ${dinhdangthoigian(item.capNhat)}
                         </div>
                     </div>
 
@@ -2404,19 +2599,19 @@
                         <div class="progress-metric-grid">
                             <div class="progress-metric-card">
                                 <div class="progress-metric-label">Điểm tốt</div>
-                                <div class="progress-metric-value">${laysotiendo(item['Điểm tốt'])}</div>
+                                <div class="progress-metric-value">${item.diemTot}</div>
                             </div>
                             <div class="progress-metric-card">
                                 <div class="progress-metric-label">Phát biểu đúng</div>
-                                <div class="progress-metric-value">${laysotiendo(item['Phát biểu đúng'])}</div>
+                                <div class="progress-metric-value">${item.phatBieuDung}</div>
                             </div>
                             <div class="progress-metric-card">
                                 <div class="progress-metric-label">Điểm xấu</div>
-                                <div class="progress-metric-value">${laysotiendo(item['Điểm xấu'])}</div>
+                                <div class="progress-metric-value">${item.diemXau}</div>
                             </div>
                             <div class="progress-metric-card">
                                 <div class="progress-metric-label">Tổng vi phạm</div>
-                                <div class="progress-metric-value">${laysotiendo(item['Tổng vi phạm'])}</div>
+                                <div class="progress-metric-value">${item.tongViPham}</div>
                             </div>
                             <div class="progress-metric-card" style="grid-column: 1 / -1;">
                                 <div class="progress-metric-label">Vi phạm nổi bật</div>
@@ -2433,7 +2628,8 @@
         }).join('');
     }
 
-    let dulieuDiemHKI = [];
+
+let dulieuDiemHKI = [];
     const monHocHKI = ['Toán', 'Hóa', 'Sinh', 'Tin', 'Văn', 'Sử', 'Địa'];
 
     const scoreHeaderAliases = {
